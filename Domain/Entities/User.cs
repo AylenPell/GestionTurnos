@@ -18,6 +18,7 @@ namespace Domain.Entities
         public string Phone { get; set; }
         public string HealthInsurance { get; set; }
         public string HealthInsurancePlan { get; set; }
+        public bool IsActive { get; set; } = true;
         public Role? Role { get; set; }
     }
 }

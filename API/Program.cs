@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
+using Application.Abstraction;
+using Infrastructure.Persistence.Repositories;
+using Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +14,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<GestorTurnosContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+#region Injections
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+#endregion
 
 var app = builder.Build();
 

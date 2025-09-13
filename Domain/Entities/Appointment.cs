@@ -9,6 +9,7 @@ namespace Domain.Entities
         public int Id { get; set; }
         public string IsPatient { get; set; }
         public string AppointmentType { get; set; }
+        public bool IsActive { get; set; } = true;
         public DateTime AppointmentDateTime { get; set; }
         // public string AppointmentTime { get; set; } --> revisar
         public enum Status { Pendiente, EnCurso, Rechazado, Confirmado, Esperando, Cancelado } // revisar
