@@ -4,9 +4,14 @@ using System.Text;
 
 namespace Domain.Entities
 {
-    public class Role
+    public class Role : BaseEntity
     {
-        public int Id { get; set; }
-        public string RoleName { get; set; }
+        public Roles RoleName { get; set; }
+    }
+    public enum Roles // revisar
+    {
+        Admin = 1,
+        Professional = 2,
+        User = 3
     }
 }

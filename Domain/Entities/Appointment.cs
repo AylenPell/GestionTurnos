@@ -4,14 +4,12 @@ using System.Text;
 
 namespace Domain.Entities
 {
-    public class Appointment
+    public class Appointment : BaseEntity
     {
-        public int Id { get; set; }
         public string IsPatient { get; set; }
         public string AppointmentType { get; set; }
-        public bool IsActive { get; set; } = true;
-        public DateTime AppointmentDateTime { get; set; }
-        // public string AppointmentTime { get; set; } --> revisar
+        public DateOnly AppointmentDateTime { get; set; }
+        public TimeOnly AppointmentTime { get; set; }
         public enum Status { Pendiente, EnCurso, Rechazado, Confirmado, Esperando, Cancelado } // revisar
         public Professional? Professional { get; set; }
         public User? User { get; set; }

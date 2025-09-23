@@ -4,10 +4,8 @@ using System.Text;
 
 namespace Domain.Entities
 {
-    public class Study
+    public class Study : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
-        public bool IsActive { get; set; } = true;
     }
 }

@@ -8,7 +8,7 @@ using Domain.Entities;
 
 namespace Infrastructure.Persistence.Repositories
 {
-    public class UserRepository : GenericRepository<User>, IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
         public UserRepository(GestorTurnosContext context)
         {

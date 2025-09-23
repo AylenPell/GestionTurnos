@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Persistence.Repositories
 {
-    public abstract class GenericRepository<T> where T : class
+    public abstract class BaseRepository<T> where T : BaseEntity
     {
         protected GestorTurnosContext _context;
-        public List<T?> Get()
+        public List<T?> GetAll()
         {
             return new List<T?>();
         }

@@ -8,7 +8,7 @@ using Domain.Entities;
 
 namespace Application.Abstraction
 {
-    public interface IUserRepository : IGenericRepository<User>
+    public interface IUserRepository : IBaseRepository<User>
     {
         User? GetOne(string DNI);
         bool Create(User user);
