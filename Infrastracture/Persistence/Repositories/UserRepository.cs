@@ -14,17 +14,17 @@ namespace Infrastructure.Persistence.Repositories
         {
             _context = context;
         }
-        public User? GetOne(string DNI)
+        public User? GetByDNI(string DNI)
         {
           return _context.Users.FirstOrDefault(u => u.DNI == DNI);
         }
-        public bool Create(User user)
-        {
-            _context.Users.Add(user);
-            _context.SaveChanges();
+        //public bool Create(User user)
+        //{
+        //    _context.Users.Add(user);
+        //    _context.SaveChanges();
 
-            return true;
-        }
+        //    return true;
+        //}
 
     }
 }

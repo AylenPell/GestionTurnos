@@ -10,8 +10,7 @@ namespace Application.Abstraction
 {
     public interface IUserRepository : IBaseRepository<User>
     {
-        User? GetOne(string DNI);
-        bool Create(User user);
+        User? GetByDNI(string dni);
 
     }
 }

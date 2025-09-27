@@ -1,9 +1,4 @@
 ﻿using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Persistence.Repositories
 {
@@ -18,7 +13,7 @@ namespace Infrastructure.Persistence.Repositories
         {
             return _context.Set<T>().Find(id);
         }
-        public void Add(T item)
+        public void Create(T item)
         {
             _context.Add(item);
             _context.SaveChanges();

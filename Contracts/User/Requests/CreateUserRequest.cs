@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using System.Timers;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Contracts.Requests
+namespace Contracts.User.Requests
 {
-    internal class CreateUserRequest
+    public class CreateUserRequest
     {
         public int Id { get; set; }
         [Required (ErrorMessage ="El nombre es requerido")]
@@ -19,11 +13,16 @@ namespace Contracts.Requests
         public string DNI { get; set; }
         [Required(ErrorMessage = "El email es requerido")]
         public string Email { get; set; }
-        [Required(ErrorMessage = "La contraseña es requerida")]
+        public string? Address { get; set; }
+        [Required(ErrorMessage = "La ciudad es requerida")]
+        public string? City { get; set; }
+        public string? Phone { get; set; }
+        public int? RoleId { get; set; }
+        [Required(ErrorMessage = "La contraseña es requerida")] // ver regex
         public string Password { get; set; }
         [Required(ErrorMessage = "La obra social es requerida")]
         public string HealthInsurance { get; set; }
-        public string HealthInsurancePlan { get; set; }
+        public string? HealthInsurancePlan { get; set; }
 
     }
 }

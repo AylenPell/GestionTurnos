@@ -1,7 +1,6 @@
-﻿
-namespace Contracts.Responses
+﻿namespace Contracts.User.Responses
 {
-    internal class UserResponse
+    public class UserResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }

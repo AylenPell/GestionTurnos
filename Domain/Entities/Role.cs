@@ -8,10 +8,11 @@ namespace Domain.Entities
     {
         public Roles RoleName { get; set; }
     }
-    public enum Roles // revisar
+    public enum Roles
     {
-        Admin = 1,
-        Professional = 2,
-        User = 3
+        SuperAdmin = 1,
+        Admin = 2,
+        User = 3,
+        Professional = 4
     }
 }

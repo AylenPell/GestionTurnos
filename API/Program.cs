@@ -1,8 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using Infrastructure;
 using Application.Abstraction;
-using Infrastructure.Persistence.Repositories;
 using Application.Services;
+using Domain.Entities;
+using Infrastructure;
+using Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,9 +17,31 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<GestorTurnosContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 #region Injections
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 #endregion
 
 var app = builder.Build();
+
+// Aplicar migraciones y seed de Roles
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<GestorTurnosContext>();
+
+    // Aplica migraciones pendientes
+    context.Database.Migrate();
+
+    // Seed Roles si no existen
+    if (!context.Roles.Any())
+    {
+        context.Roles.AddRange(
+            new Role { Id = 1, RoleName = Roles.SuperAdmin },
+            new Role { Id = 2, RoleName = Roles.Admin },
+            new Role { Id = 3, RoleName = Roles.User },
+            new Role { Id = 4, RoleName = Roles.Professional }
+        );
+        context.SaveChanges();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
