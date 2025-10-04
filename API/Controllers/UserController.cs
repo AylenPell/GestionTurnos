@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Application.Services;
+﻿using Application.Services;
 using Contracts.User.Requests;
 using Contracts.User.Responses;
+using Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
@@ -9,7 +10,6 @@ namespace API.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private const string searchItem= "{dni}";
     private readonly IUserService _userService;
 
     public UserController(IUserService userService)
@@ -32,7 +32,7 @@ public class UserController : ControllerBase
         }
         return Ok(user);
     }
-    [HttpGet(searchItem)]
+    [HttpGet("dni/{dni}")]
     public ActionResult<UserResponse?> GetByDNI([FromRoute] string dni)
     {
         var user = _userService.GetByDNI(dni);
@@ -51,5 +51,24 @@ public class UserController : ControllerBase
             return Conflict("No se pudo crear el usuario.");
         }
         return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+    }
+    [HttpPut("{id}")]
+    public ActionResult Update([FromRoute]  int id, [FromBody] UpdateUserRequest user)
+    {
+        var isUpdated = _userService.Update(id, user);
+        if (!isUpdated)
+            return Conflict("Error al actualizar el usuario");
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult Delete([FromRoute] int id)
+    {
+        var isDeleted = _userService.Delete(id);
+        if (!isDeleted)
+            return Conflict("Error al eliminar el usuario");
+
+        return NoContent();
     }
 }

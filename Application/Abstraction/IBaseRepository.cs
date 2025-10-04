@@ -6,7 +6,8 @@ namespace Application.Abstraction
     {
         List<T?> GetAll();
         T? GetById(int id);
-        void Create(T? item);
-        void Update(T item);
+        bool Create(T? item);
+        bool Update(T item);
+        bool Delete(T item);
     }
 }

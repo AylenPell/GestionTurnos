@@ -5,33 +5,36 @@ namespace Infrastructure.Persistence.Repositories
     public abstract class BaseRepository<T> where T : BaseEntity
     {
         protected GestorTurnosContext _context;
-        public List<T?> GetAll()
+        public virtual List<T> GetAll()
         {
-            return new List<T?>();
+            return _context.Set<T>().ToList();
         }
         public T? GetById(int id)
         {
             return _context.Set<T>().Find(id);
         }
-        public void Create(T item)
+        public virtual bool Create(T item)
         {
             _context.Add(item);
             _context.SaveChanges();
+
+            return true;
         }
-        public void Update(T item)
+        public virtual bool Update(T item)
         {
             _context.Update(item);
             _context.SaveChanges();
+
+            return true;
         }
-        //public void softDelete(T item)
-        //{
-        //    var findItem = _context.Set<T>().Find(item);
-        //    if (findItem != null)
-        //        {
-        //            findItem.IsActive = false;
-        //            _context.SaveChanges();
-        //        }
-        //}
+        public virtual bool Delete(T item)
+        {
+            item.IsActive = false;
+            _context.Update(item);
+            _context.SaveChanges();
+
+            return true;
+        }
 
     }
 }

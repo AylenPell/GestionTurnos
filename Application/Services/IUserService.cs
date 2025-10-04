@@ -9,5 +9,7 @@ namespace Application.Services
         UserResponse? GetById(int id);
         UserResponse? GetByDNI(string dni);
         bool Create(CreateUserRequest user);
+        bool Update(int id, UpdateUserRequest user);
+        bool Delete(int id);
     }
 }

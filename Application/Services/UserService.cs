@@ -84,5 +84,37 @@ namespace Application.Services
             _userRepository.Create(newUser);
             return true;
         }
+
+        public bool Update( int id, UpdateUserRequest user)
+        {
+            var existingUser = _userRepository.GetById(id);
+
+            if (existingUser == null)
+                return false;
+
+            existingUser.Name = user.Name ?? existingUser.Name;
+            existingUser.LastName = user.LastName ?? existingUser.LastName;
+            existingUser.DNI = user.DNI ?? existingUser.DNI;
+            existingUser.Email = user.Email ?? existingUser.Email;
+            existingUser.Address = user.Address ?? existingUser.Address;
+            existingUser.City = user.City ?? existingUser.City;
+            existingUser.Phone = user.Phone ?? existingUser.Phone;
+            existingUser.Password = user.Password ?? existingUser.Password;
+            existingUser.HealthInsurance = user.HealthInsurance ?? existingUser.HealthInsurance;
+            existingUser.HealthInsurancePlan = user.HealthInsurancePlan ?? existingUser.HealthInsurancePlan;
+
+            return _userRepository.Update(existingUser);
+        }
+
+        public bool Delete(int id)
+        {
+            var deletedUser = _userRepository.GetById(id);
+            if (deletedUser == null)
+                return false;
+
+            return _userRepository.Delete(deletedUser);
+        }
+
     }
+    
 }
