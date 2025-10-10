@@ -1,7 +1,8 @@
-﻿using Contracts.User.Responses;
-using Application.Abstraction;
-using Domain.Entities;
+﻿using Application.Abstraction;
 using Contracts.User.Requests;
+using Contracts.User.Responses;
+using Domain.Entities;
+using Application.Services.Helpers;
 
 namespace Application.Services
 {
@@ -22,7 +23,11 @@ namespace Application.Services
                     Name = user.Name,
                     LastName = user.LastName,
                     DNI = user.DNI,
+                    BirthDate = user.BirthDate,
                     Email = user.Email,
+                    City = user.City,
+                    Address = user.Address,
+                    Phone = user.Phone,
                     HealthInsurance = user.HealthInsurance,
                     HealthInsurancePlan = user.HealthInsurancePlan
                 }).ToList();
@@ -39,7 +44,11 @@ namespace Application.Services
                     Name = user.Name,
                     LastName = user.LastName,
                     DNI = user.DNI,
+                    BirthDate = user.BirthDate,
                     Email = user.Email,
+                    City = user.City,
+                    Address = user.Address,
+                    Phone = user.Phone,
                     HealthInsurance = user.HealthInsurance,
                     HealthInsurancePlan = user.HealthInsurancePlan
                 }
@@ -55,46 +64,124 @@ namespace Application.Services
                     Name = user.Name,
                     LastName = user.LastName,
                     DNI = user.DNI,
+                    BirthDate = user.BirthDate,
                     Email = user.Email,
+                    City = user.City,
+                    Address = user.Address,
+                    Phone = user.Phone,
                     HealthInsurance = user.HealthInsurance,
                     HealthInsurancePlan = user.HealthInsurancePlan
                 }
                 : null;
         }
-        public bool Create(CreateUserRequest user) 
+        public bool Create(CreateUserRequest user, out string message)
         {
+            message = "";
+
             var existingUser = _userRepository.GetByDNI(user.DNI);
             if (existingUser != null)
             {
-                return false; // Usuario con el mismo DNI ya existe
+                message = "El usuario ya existe.";
+                return false;
             }
+
+            if (!ValidationHelper.DNIValidator(user.DNI))
+            {
+                message = "El DNI ingresado no es válido.";
+                return false;
+            }
+
+            if (!ValidationHelper.EmailValidator(user.Email))
+            {
+                message = "El email ingresado no es válido.";
+                return false;
+            }
+
+            if (!ValidationHelper.PhoneNumberValidator(user.Phone))
+            {
+                message = "El número de teléfono ingresado no es válido.";
+                return false;
+            }
+            if (!ValidationHelper.BirthDateValidator(user.BirthDate))
+            {
+                message = "La fecha de nacimiento no es válida.";
+                return false;
+            }
+            if (!ValidationHelper.PasswordValidator(user.Password))
+            {
+                message = "La contraseña no es válida.";
+                return false;
+            }
+
             var newUser = new User
             {
                 Name = user.Name,
                 LastName = user.LastName,
                 DNI = user.DNI,
+                BirthDate = user.BirthDate,
                 Password = user.Password,
                 Email = user.Email,
                 City = user.City,
                 Address = user.Address,
-                Phone = user.Phone, 
+                Phone = user.Phone,
                 HealthInsurance = user.HealthInsurance,
                 HealthInsurancePlan = user.HealthInsurancePlan
             };
+
             _userRepository.Create(newUser);
+
+            message = "Usuario creado correctamente.";
             return true;
         }
 
-        public bool Update( int id, UpdateUserRequest user)
-        {
-            var existingUser = _userRepository.GetById(id);
 
+        public bool Update(int id, UpdateUserRequest user, out string message)
+        {
+            message = "";
+
+            var existingUser = _userRepository.GetById(id);
             if (existingUser == null)
+            {
+                message = "El usuario no existe.";
                 return false;
+            }
+
+            if (user.DNI != null && !ValidationHelper.DNIValidator(user.DNI))
+            {
+                message = "El DNI ingresado no es válido.";
+                return false;
+            }
+
+            if (user.Email != null && !ValidationHelper.EmailValidator(user.Email))
+            {
+                message = "El email ingresado no es válido.";
+                return false;
+            }
+
+            if (user.Phone != null && !ValidationHelper.PhoneNumberValidator(user.Phone))
+            {
+                message = "El número de teléfono ingresado no es válido.";
+                return false;
+            }
+
+            if (user.BirthDate.HasValue && !ValidationHelper.BirthDateValidator(user.BirthDate.Value))
+            {
+                message = "La fecha de nacimiento no es válida.";
+                return false;
+            }
+            if (user.Password != null &&  !ValidationHelper.PasswordValidator(user.Password))
+            {
+                message = "La contraseña no es válida.";
+                return false;
+            }
 
             existingUser.Name = user.Name ?? existingUser.Name;
             existingUser.LastName = user.LastName ?? existingUser.LastName;
             existingUser.DNI = user.DNI ?? existingUser.DNI;
+
+            if (user.BirthDate.HasValue)
+                existingUser.BirthDate = user.BirthDate.Value;
+
             existingUser.Email = user.Email ?? existingUser.Email;
             existingUser.Address = user.Address ?? existingUser.Address;
             existingUser.City = user.City ?? existingUser.City;
@@ -103,8 +190,18 @@ namespace Application.Services
             existingUser.HealthInsurance = user.HealthInsurance ?? existingUser.HealthInsurance;
             existingUser.HealthInsurancePlan = user.HealthInsurancePlan ?? existingUser.HealthInsurancePlan;
 
-            return _userRepository.Update(existingUser);
+            var updated = _userRepository.Update(existingUser);
+
+            if (!updated)
+            {
+                message = "No se pudo actualizar el usuario en la base de datos.";
+                return false;
+            }
+
+            message = "Usuario actualizado correctamente.";
+            return true;
         }
+
 
         public bool Delete(int id)
         {

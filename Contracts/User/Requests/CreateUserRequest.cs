@@ -11,6 +11,8 @@ namespace Contracts.User.Requests
         public string LastName { get; set; }
         [Required(ErrorMessage = "El DNI es requerido")]
         public string DNI { get; set; }
+        [Required(ErrorMessage = "La fecha de nacimiento es requerida")]
+        public DateOnly BirthDate { get; set; }
         [Required(ErrorMessage = "El email es requerido")]
         public string Email { get; set; }
         public string? Address { get; set; }

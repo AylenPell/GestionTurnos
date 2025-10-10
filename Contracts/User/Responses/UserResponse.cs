@@ -1,4 +1,6 @@
-﻿namespace Contracts.User.Responses
+﻿using System.Text.Json.Serialization;
+
+namespace Contracts.User.Responses
 {
     public class UserResponse
     {
@@ -7,7 +9,17 @@
         public string LastName { get; set; }
         public string DNI { get; set; }
         public string Email { get; set; }
-        public string HealthInsurance { get; set; }
-        public string HealthInsurancePlan { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public DateOnly? BirthDate { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? Address { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? City { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? Phone { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? HealthInsurance { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? HealthInsurancePlan { get; set; }
     }
 }
