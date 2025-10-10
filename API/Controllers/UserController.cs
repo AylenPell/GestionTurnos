@@ -1,7 +1,6 @@
 ﻿using Application.Services;
 using Contracts.User.Requests;
 using Contracts.User.Responses;
-using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -45,22 +44,30 @@ public class UserController : ControllerBase
     [HttpPost]
     public ActionResult Create([FromBody] CreateUserRequest user)
     {
-        var createdUser = _userService.Create(user);
-        if(!createdUser)
-        {
-            return Conflict("No se pudo crear el usuario.");
-        }
-        return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-    }
-    [HttpPut("{id}")]
-    public ActionResult Update([FromRoute]  int id, [FromBody] UpdateUserRequest user)
-    {
-        var isUpdated = _userService.Update(id, user);
-        if (!isUpdated)
-            return Conflict("Error al actualizar el usuario");
+        string message;
+        bool creado = _userService.Create(user, out message);
 
-        return NoContent();
+        if (!creado)
+        {
+            return Conflict(new { message });
+        }
+
+        return CreatedAtAction(nameof(GetById), new { id = user.Id }, new { message });
     }
+
+    [HttpPut("{id}")]
+    public ActionResult Update([FromRoute] int id, [FromBody] UpdateUserRequest user)
+    {
+        string message;
+
+        var isUpdated = _userService.Update(id, user, out message);
+
+        if (!isUpdated)
+            return Conflict(new { message });
+
+        return Ok(new { message });
+    }
+
 
     [HttpDelete("{id}")]
     public ActionResult Delete([FromRoute] int id)
