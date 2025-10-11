@@ -10,6 +10,7 @@ namespace Infrastructure
         public DbSet<Professional> Professionals { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Study> Studies { get; set; }
+        public DbSet<Specialty> Specialties { get; set; }
 
         public GestorTurnosContext(DbContextOptions<GestorTurnosContext> options) : base(options)
         {
@@ -18,9 +19,12 @@ namespace Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
-            // Convierte el enum Roles a string en la BD para ponerles el nombre
             modelBuilder.Entity<Role>()
                 .Property(r => r.RoleName)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Specialty>()
+                .Property(s => s.SpecialtyName)
                 .HasConversion<string>();
         }
     }

@@ -4,7 +4,7 @@ namespace Contracts.User.Requests
 {
     public class CreateUserRequest
     {
-        public int Id { get; set; }
+        public int Id { get; set; } // va????????????????
         [Required (ErrorMessage ="El nombre es requerido")]
         public string Name { get; set; }
         [Required(ErrorMessage = "El apellido es requerido")]
