@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Route("[controller]")]
+    [ApiController]
     public class SpecialtyController : ControllerBase
     {
         private readonly ISpecialtyService _specialtyService;
@@ -14,15 +16,15 @@ namespace API.Controllers
             _specialtyService = specialtyService;
         }
 
-        [HttpGet("/specialties")]
+        [HttpGet]
         public IActionResult GetAll()
         {
             var specialties = _specialtyService.GetAll();
             return Ok(specialties);
         }
 
-        [HttpGet("/specialties/{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        [HttpGet("{id}", Name = "GetSpecialtyById")]
+        public ActionResult GetById([FromRoute] int id)
         {
             var specialty = _specialtyService.GetById(id);
             if (specialty == null)
@@ -32,21 +34,44 @@ namespace API.Controllers
             return Ok(specialty);
         }
 
-        [HttpPost("/specialties")]
+        [HttpPost]
         public ActionResult Create([FromBody] CreateSpecialtyRequest specialty)
         {
             string message;
-            bool created = _specialtyService.Create(specialty, out message);
+            int createdId;
+            bool created = _specialtyService.Create(specialty, out message, out createdId);
 
             if (!created)
             {
                 return Conflict(new { message });
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = specialty.Id }, new { message });
+            return CreatedAtRoute("GetSpecialtyById", new { id = createdId }, new { id = createdId, message });
         }
 
-        // falta update y soft delete 
-        // cambiar specialty a name string en lugar de enum y a la bosta
+        [HttpPut("{id}")]
+        public ActionResult Update([FromRoute] int id, [FromBody] UpdateSpecialtyRequest specialty)
+        {
+            string message;
+
+            var isUpdated = _specialtyService.Update(id, specialty, out message);
+
+            if (!isUpdated)
+                return Conflict(new { message });
+
+            return Ok(new { message });
+        }
+
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            string message;
+            var isDeleted = _specialtyService.Delete(id, out message);
+            if (!isDeleted)
+                return Conflict(new { message });
+
+            return Ok(new { message });
+        }
     }
 }

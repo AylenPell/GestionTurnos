@@ -74,9 +74,10 @@ namespace Application.Services
                 }
                 : null;
         }
-        public bool Create(CreateUserRequest user, out string message)
+        public bool Create(CreateUserRequest user, out string message, out int createdId)
         {
             message = "";
+            createdId = 0;
 
             var existingUser = _userRepository.GetByDNI(user.DNI);
             if (existingUser != null)
@@ -131,6 +132,7 @@ namespace Application.Services
             _userRepository.Create(newUser);
 
             message = "Usuario creado correctamente.";
+            createdId = newUser.Id;
             return true;
         }
 

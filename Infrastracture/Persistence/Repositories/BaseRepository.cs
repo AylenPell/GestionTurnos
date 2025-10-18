@@ -6,8 +6,8 @@ namespace Infrastructure.Persistence.Repositories
 {
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
-        private readonly GestorTurnosContext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly GestorTurnosContext _context;
+        protected readonly DbSet<T> _dbSet;
         protected BaseRepository(GestorTurnosContext context)
         {
             _context = context;
@@ -17,7 +17,7 @@ namespace Infrastructure.Persistence.Repositories
         {
             return _dbSet.ToList();
         }
-        public T? GetById(int id)
+        public virtual T? GetById(int id)
         {
             return _dbSet.Find(id);
         }

@@ -2,7 +2,8 @@
 {
     public class CreateSpecialtyRequest
     {   
-        public int Id { get; set; }
-        public int Name { get; set; } 
+        public int? Id { get; set; }
+        public string Name { get; set; }
+        public bool? IsActive { get; set; } = true;
     }
 }

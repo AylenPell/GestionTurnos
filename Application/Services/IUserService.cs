@@ -8,7 +8,7 @@ namespace Application.Services
         List<UserResponse> GetAll();
         UserResponse? GetById(int id);
         UserResponse? GetByDNI(string dni);
-        bool Create(CreateUserRequest user, out string message);
+        bool Create(CreateUserRequest user, out string message, out int createdId);
         bool Update(int id, UpdateUserRequest user, out string message);
         bool Delete(int id);
     }

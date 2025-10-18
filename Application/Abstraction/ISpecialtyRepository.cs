@@ -1,14 +1,11 @@
-﻿using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Contracts.Specialty.Responses;
+using Domain.Entities;
 
 namespace Application.Abstraction
 {
     public interface ISpecialtyRepository : IBaseRepository<Specialty>
     {
-
+        Specialty? GetByName(string name);
+        Specialty? GetById(int id);
     }
 }

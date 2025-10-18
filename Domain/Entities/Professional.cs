@@ -9,10 +9,9 @@ namespace Domain.Entities
         public string Name { get; set; }
         public string LastName { get; set; }
         public string License { get; set; }
-        public int SpecialtyId { get; set; }
-        public Specialty? Specialty { get; set; }
         public string AttentionSchedule { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
+        public ICollection<ProfessionalSpecialty> ProfessionalSpecialties { get; set; } = new List<ProfessionalSpecialty>();
     }
 }
