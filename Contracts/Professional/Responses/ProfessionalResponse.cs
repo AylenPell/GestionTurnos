@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Contracts.Professional.Responses
 {
-    public class Professional : BaseEntity
+    public class ProfessionalResponse
     {
+        public int Id { get; set; }
+        public bool IsActive { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
         public string License { get; set; }
         public string AttentionSchedule { get; set; }
         public int RoleId { get; set; }
-        public Role Role { get; set; }
-        public ICollection<ProfessionalSpecialty> ProfessionalSpecialties { get; set; } = new List<ProfessionalSpecialty>();
+        public int SpecialtiesCount { get; set; }
 
     }
 }
