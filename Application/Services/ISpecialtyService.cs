@@ -7,6 +7,9 @@ namespace Application.Services
     {
         List<SpecialtyResponse> GetAll();
         SpecialtyResponse? GetById(int id);
-        bool Create(CreateSpecialtyRequest specialty, out string message);
+        SpecialtyResponse? GetByName(string name);  
+        bool Create(CreateSpecialtyRequest specialty, out string message, out int createdId);
+        bool Update(int id, UpdateSpecialtyRequest specialty, out string message);
+        bool Delete(int id, out string message);
     }
 }

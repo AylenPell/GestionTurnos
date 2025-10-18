@@ -3,6 +3,7 @@ using Application.Services;
 using Domain.Entities;
 using Infrastructure;
 using Infrastructure.Persistence.Repositories;
+using Infrastructure.Seeders;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,14 +28,12 @@ builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
 
 var app = builder.Build();
 
-// Aplicar migraciones y seed de Roles
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<GestorTurnosContext>();
-
-    // Aplica migraciones pendientes
-    context.Database.Migrate();
-}
+#region Seeders
+await SpecialtySeeder.SeedAsync(
+    app.Services,
+    migrateDb: app.Environment.IsDevelopment()
+);
+#endregion
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

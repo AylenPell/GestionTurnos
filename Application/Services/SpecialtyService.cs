@@ -2,11 +2,6 @@
 using Contracts.Specialty.Requests;
 using Contracts.Specialty.Responses;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -21,13 +16,16 @@ namespace Application.Services
         public List<SpecialtyResponse> GetAll()
         {
             var specialties = _specialtyRepository.GetAll();
-            var specialtyList = specialties.Select(specialty => new SpecialtyResponse
-            {
-                Id = specialty.Id,
-                Name = specialty.Name.ToString(),
-                IsActive = specialty.IsActive,
-                ProfessionalsCount = specialty.Professionals.Count
-            }).ToList();
+            var specialtyList = specialties
+                .Select(specialty => new SpecialtyResponse
+                {
+                    Id = specialty.Id,
+                    Name = specialty.SpecialtyName,
+                    IsActive = specialty.IsActive,
+                    ProfessionalsCount = specialty.ProfessionalSpecialties.Count
+                })
+                .OrderBy(specialty => specialty.Name)
+                .ToList();
 
             return specialtyList;
         }
@@ -42,24 +40,102 @@ namespace Application.Services
             var specialtyResponse = new SpecialtyResponse
             {
                 Id = specialty.Id,
-                Name = specialty.Name.ToString(),
+                Name = specialty.SpecialtyName,
                 IsActive = specialty.IsActive,
-                ProfessionalsCount = specialty.Professionals.Count
+                ProfessionalsCount = specialty.ProfessionalSpecialties.Count
             };
 
             return specialtyResponse;
         }
 
-        public bool Create(CreateSpecialtyRequest specialty, out string message)
+        public SpecialtyResponse? GetByName(string name)
+        {
+            var specialty = _specialtyRepository.GetByName(name);
+            if (specialty == null)
+            {
+                return null;
+            }
+            var specialtyResponse = new SpecialtyResponse
+            {
+                Id = specialty.Id,
+                Name = specialty.SpecialtyName,
+                IsActive = specialty.IsActive,
+                ProfessionalsCount = specialty.ProfessionalSpecialties.Count
+            };
+
+            return specialtyResponse;
+        }
+        public bool Create(CreateSpecialtyRequest specialty, out string message, out int createdId)
         {
             message = "";
+            createdId = 0;
 
-            var specialtyEntity = new Specialty
+
+            if (specialty == null || string.IsNullOrWhiteSpace(specialty.Name))
             {
-                Name = (Specialties)specialty.Name, // Castea int a enum Specialties
-                IsActive = true
+                message = "El nombre de la especialidad es obligatorio.";
+                return false;
+            }
+
+            var specialtyName = specialty.Name.Trim().ToLower();
+            var existingSpecialty = _specialtyRepository.GetByName(specialtyName);
+            if (existingSpecialty != null)
+            {
+                message = "Ya existe una especialidad con ese nombre.";
+                return false;
+            }
+
+            var newSpecialty = new Specialty()
+            {
+                SpecialtyName = specialtyName,
             };
-            return _specialtyRepository.Create(specialtyEntity);
+            _specialtyRepository.Create(newSpecialty);
+
+            createdId = newSpecialty.Id;
+            message = "Especialidad creada exitosamente.";
+            return true;
+        }
+
+        public bool Update(int id, UpdateSpecialtyRequest specialty, out string message)
+        {
+            message = "";
+            var existingSpecialty = _specialtyRepository.GetById(id);
+            if (existingSpecialty == null)
+            {
+                message = "La especialidad no existe.";
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(specialty.Name))
+            {
+                message = "El nombre de la especialidad es obligatorio.";
+                return false;
+            }
+            var specialtyName = specialty.Name.Trim().ToLower();
+            var existingName = _specialtyRepository.GetByName(specialtyName);
+            if (existingName != null && existingName.Id != id)
+            {
+                message = "Ya existe una especialidad con ese nombre.";
+                return false;
+            }
+            existingSpecialty.SpecialtyName = specialtyName;
+            _specialtyRepository.Update(existingSpecialty);
+            message = "Especialidad actualizada exitosamente.";
+            return true;
+        }
+
+        public bool Delete(int id, out string message)
+        {
+            message = "";
+            var existingSpecialty = _specialtyRepository.GetById(id);
+            if (existingSpecialty == null)
+            {
+                message = "La especialidad no existe.";
+                return false;
+            }
+            _specialtyRepository.Delete(existingSpecialty);
+            message = "Especialidad eliminada exitosamente.";
+            return true;
         }
     }
 }
+
