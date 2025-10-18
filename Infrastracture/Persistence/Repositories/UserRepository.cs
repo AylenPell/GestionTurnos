@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Abstraction;
+﻿using Application.Abstraction;
 using Domain.Entities;
 
 namespace Infrastructure.Persistence.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(GestorTurnosContext context)
+        private readonly GestorTurnosContext _context;
+        public UserRepository(GestorTurnosContext context) : base(context)
         {
             _context = context;
         }

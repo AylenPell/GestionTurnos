@@ -15,9 +15,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<GestorTurnosContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 #region Injections
+// user
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+// specialty
+builder.Services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
+builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
 #endregion
 
 var app = builder.Build();
@@ -29,18 +34,6 @@ using (var scope = app.Services.CreateScope())
 
     // Aplica migraciones pendientes
     context.Database.Migrate();
-
-    // Seed Roles si no existen
-    if (!context.Roles.Any())
-    {
-        context.Roles.AddRange(
-            new Role { Id = 1, RoleName = Roles.SuperAdmin },
-            new Role { Id = 2, RoleName = Roles.Admin },
-            new Role { Id = 3, RoleName = Roles.User },
-            new Role { Id = 4, RoleName = Roles.Professional }
-        );
-        context.SaveChanges();
-    }
 }
 
 // Configure the HTTP request pipeline.
