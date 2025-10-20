@@ -21,6 +21,7 @@ public class UserController : ControllerBase
         var users = _userService.GetAll();
         return Ok(users);
     }
+
     [HttpGet("{id}", Name = "GetUserById")]
     public ActionResult<UserResponse?> GetById([FromRoute] int id)
     {
@@ -31,6 +32,7 @@ public class UserController : ControllerBase
         }
         return Ok(user);
     }
+
     [HttpGet("dni/{dni}")]
     public ActionResult<UserResponse?> GetByDNI([FromRoute] string dni)
     {

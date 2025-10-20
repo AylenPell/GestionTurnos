@@ -24,6 +24,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 // specialty
 builder.Services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
 builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
+// study
+builder.Services.AddScoped<IStudyRepository, StudyRepository>();
+builder.Services.AddScoped<IStudyService, StudyService>();
 #endregion
 
 var app = builder.Build();
