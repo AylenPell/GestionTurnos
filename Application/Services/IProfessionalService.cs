@@ -1,4 +1,5 @@
 ﻿
+using Contracts.Professional.Requests;
 using Contracts.Professional.Responses;
 
 namespace Application.Services
@@ -6,7 +7,10 @@ namespace Application.Services
     public interface IProfessionalService
     {
         List<ProfessionalResponse> GetAll();
-        ProfessionalResponse? GetById(int id);
-        ProfessionalResponse? GetByLicense(string license);
+        ProfessionalResponse? GetById(int id, out string message);
+        ProfessionalResponse? GetByLicense(string license, out string message);
+        bool Update(int id, UpdateProfessionalRequest professional, out string message);
+        bool Delete(int id, out string message);
+        bool Create(CreateProfessionalRequest professional, out string message, out int createdId);
     }
 }

@@ -10,7 +10,7 @@ namespace Domain.Entities
         public string LastName { get; set; }
         public string License { get; set; }
         public string AttentionSchedule { get; set; }
-        public int RoleId { get; set; }
+        public int RoleId { get; set; } = 4;
         public Role Role { get; set; }
         public ICollection<ProfessionalSpecialty> ProfessionalSpecialties { get; set; } = new List<ProfessionalSpecialty>();
 

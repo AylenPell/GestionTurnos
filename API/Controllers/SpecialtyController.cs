@@ -26,7 +26,8 @@ namespace API.Controllers
         [HttpGet("{id}", Name = "GetSpecialtyById")]
         public ActionResult GetById([FromRoute] int id)
         {
-            var specialty = _specialtyService.GetById(id);
+            string message;
+            var specialty = _specialtyService.GetById(id, out message);
             if (specialty == null)
             {
                 return NotFound();
@@ -36,7 +37,8 @@ namespace API.Controllers
         [HttpGet("name/{name}")]
         public ActionResult GetByName([FromRoute] string name)
         {
-            var specialty = _specialtyService.GetByName(name);
+            string message;
+            var specialty = _specialtyService.GetByName(name, out message);
             if (specialty == null)
             {
                 return NotFound();

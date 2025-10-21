@@ -5,6 +5,6 @@ namespace Application.Abstraction
 {
     public interface IProfessionalRepository : IBaseRepository<Professional>
     {
-        ProfessionalResponse? GetByLicense(string license);
+        Professional? GetByLicense(string license);
     }
 }

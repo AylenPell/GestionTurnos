@@ -30,11 +30,13 @@ namespace Application.Services
             return specialtyList;
         }
 
-        public SpecialtyResponse? GetById(int id)
+        public SpecialtyResponse? GetById(int id, out string message)
         {
+            message = "";
             var specialty = _specialtyRepository.GetById(id);
             if (specialty == null)
             {
+                message = "Especialidad no encontrada.";
                 return null;
             }
             var specialtyResponse = new SpecialtyResponse
@@ -44,15 +46,17 @@ namespace Application.Services
                 IsActive = specialty.IsActive,
                 ProfessionalsCount = specialty.ProfessionalSpecialties.Count
             };
-
+            message = "Especialidad encontrada.";
             return specialtyResponse;
         }
 
-        public SpecialtyResponse? GetByName(string name)
+        public SpecialtyResponse? GetByName(string name, out string message)
         {
+            message = "";
             var specialty = _specialtyRepository.GetByName(name);
             if (specialty == null)
             {
+                message = "Especialidad no encontrada.";
                 return null;
             }
             var specialtyResponse = new SpecialtyResponse
@@ -62,7 +66,7 @@ namespace Application.Services
                 IsActive = specialty.IsActive,
                 ProfessionalsCount = specialty.ProfessionalSpecialties.Count
             };
-
+            message = "Especialidad encontrada.";
             return specialtyResponse;
         }
         public bool Create(CreateSpecialtyRequest specialty, out string message, out int createdId)
@@ -76,6 +80,7 @@ namespace Application.Services
                 message = "El nombre de la especialidad es obligatorio.";
                 return false;
             }
+           
 
             var specialtyName = specialty.Name.Trim().ToLower();
             var existingSpecialty = _specialtyRepository.GetByName(specialtyName);
@@ -130,6 +135,11 @@ namespace Application.Services
             if (existingSpecialty == null)
             {
                 message = "La especialidad no existe.";
+                return false;
+            }
+            if (!existingSpecialty.IsActive)
+            {
+                message = "La especialidad ya se encuentra inactiva.";
                 return false;
             }
             _specialtyRepository.Delete(existingSpecialty);

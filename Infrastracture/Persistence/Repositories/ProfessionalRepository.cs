@@ -20,5 +20,11 @@ namespace Infrastructure.Persistence.Repositories
                 .ToList();
         }
 
+        public Professional? GetByLicense(string license)
+        {
+            return _context.Professionals
+                .Include(s => s.ProfessionalSpecialties)
+                .FirstOrDefault(s => s.License == license && s.IsActive);
+        }
     }
 }
