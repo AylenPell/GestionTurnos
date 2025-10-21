@@ -75,7 +75,8 @@ public class UserController : ControllerBase
     [HttpDelete("{id}")]
     public ActionResult Delete([FromRoute] int id)
     {
-        var isDeleted = _userService.Delete(id);
+        string message;
+        var isDeleted = _userService.Delete(id, out message);
         if (!isDeleted)
             return Conflict("Error al eliminar el usuario");
 

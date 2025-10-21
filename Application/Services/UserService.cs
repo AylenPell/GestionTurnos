@@ -205,13 +205,31 @@ namespace Application.Services
         }
 
 
-        public bool Delete(int id)
+        //public bool Delete(int id)
+        //{
+        //    var deletedUser = _userRepository.GetById(id);
+        //    if (deletedUser == null)
+        //        return false;
+
+        //    return _userRepository.Delete(deletedUser);
+        //}
+        public bool Delete(int id, out string message)
         {
+            message = "";
             var deletedUser = _userRepository.GetById(id);
             if (deletedUser == null)
+            {
+                message = "El usuario no existe.";
                 return false;
-
-            return _userRepository.Delete(deletedUser);
+            }
+            if (!deletedUser.IsActive)
+            {
+                message = "El usuario ya se encuentra inactivo.";
+                return false;
+            }
+            _userRepository.Delete(deletedUser);
+            message = "Usuario eliminado exitosamente.";
+            return true;
         }
 
     }
