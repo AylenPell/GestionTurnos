@@ -27,12 +27,19 @@ builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
 // professional
 builder.Services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
 builder.Services.AddScoped<IProfessionalService, ProfessionalService>();
+// study
+builder.Services.AddScoped<IStudyRepository, StudyRepository>();
+builder.Services.AddScoped<IStudyService, StudyService>();
 #endregion
 
 var app = builder.Build();
 
 #region Seeders
 await SpecialtySeeder.SeedAsync(
+    app.Services,
+    migrateDb: app.Environment.IsDevelopment()
+);
+await ProfessionalSeeder.SeedAsync(
     app.Services,
     migrateDb: app.Environment.IsDevelopment()
 );
