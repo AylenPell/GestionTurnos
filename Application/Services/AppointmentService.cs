@@ -9,10 +9,16 @@ namespace Application.Services
     public class AppointmentService : IAppointmentService
     {
         private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IProfessionalRepository _professionalRepository;
+        private readonly IStudyRepository _studyRepository;
+        private readonly IUserRepository _userRepository;
 
-        public AppointmentService(IAppointmentRepository appointmentRepository)
+        public AppointmentService(IAppointmentRepository appointmentRepository, IProfessionalRepository professionalRepository, IStudyRepository studyRepository, IUserRepository userRepository)
         {
             _appointmentRepository = appointmentRepository;
+            _professionalRepository = professionalRepository;
+            _studyRepository = studyRepository;
+            _userRepository = userRepository;
         }
 
         public List<AppointmentResponse> GetAll()
@@ -121,21 +127,21 @@ namespace Application.Services
             message = "";
             createdId = 0;
 
-            var existingProfessional =_appointmentRepository.GetById(appointment.ProfessionalId.Value);
+            var existingProfessional = _professionalRepository.GetById(appointment.ProfessionalId.Value);
             if (existingProfessional == null || existingProfessional.IsActive == false)
             {
                 message = "El profesional no existe o fue desactivado.";
                 return false;
             }
 
-            var existingStudy = _appointmentRepository.GetById(appointment.StudyId.Value);
+            var existingStudy = _studyRepository.GetById(appointment.StudyId.Value);
             if (existingStudy == null || existingStudy.IsActive == false)
             {
                 message = "El estudio no existe o fue desactivado.";
                 return false;
             }
 
-            var existingUser = _appointmentRepository.GetById(appointment.UserId);
+            var existingUser = _userRepository.GetById(appointment.UserId);
             if (existingUser == null || existingUser.IsActive == false)
             {
                 message = "El usuario no existe o fue desactivado.";

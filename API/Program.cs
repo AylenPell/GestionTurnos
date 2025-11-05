@@ -33,6 +33,9 @@ builder.Services.AddScoped<IStudyService, StudyService>();
 // appointment
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
+builder.Services.AddScoped<IStudyRepository, StudyRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 #endregion
 
 var app = builder.Build();
