@@ -1,5 +1,4 @@
 ﻿using Application.Abstraction;
-using Contracts.Professional.Responses;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,7 +1,6 @@
 ﻿using Application.Services;
 using Contracts.Study.Requests;
 using Contracts.Study.Responses;
-using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;

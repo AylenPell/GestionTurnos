@@ -30,6 +30,9 @@ builder.Services.AddScoped<IProfessionalService, ProfessionalService>();
 // study
 builder.Services.AddScoped<IStudyRepository, StudyRepository>();
 builder.Services.AddScoped<IStudyService, StudyService>();
+// appointment
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 #endregion
 
 var app = builder.Build();
