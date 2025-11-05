@@ -42,11 +42,18 @@ await SpecialtySeeder.SeedAsync(
     app.Services,
     migrateDb: app.Environment.IsDevelopment()
 );
+
+await StudySeeder.SeedAsync(
+    app.Services,
+    migrateDb: app.Environment.IsDevelopment()
+);
+
 await ProfessionalSeeder.SeedAsync(
     app.Services,
     migrateDb: app.Environment.IsDevelopment()
 );
 #endregion
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
