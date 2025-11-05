@@ -14,7 +14,13 @@ namespace Infrastructure.Persistence.Repositories
         {
               _context = context;
         }
-
+        public IQueryable<Appointment> GetAll()
+        {
+            return _context.Appointments
+                .Include(a => a.Professional)
+                .Include(a => a.Study)
+                .Include(a => a.User);
+        }
         public IQueryable<Appointment> GetByUserId(int userId)
         {
             return _context.Appointments

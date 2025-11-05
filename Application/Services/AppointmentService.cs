@@ -33,9 +33,9 @@ namespace Application.Services
                     AppointmentDate = appointment.AppointmentDate,
                     AppointmentTime = appointment.AppointmentTime,
                     AppointmentStatus = appointment.AppointmentStatus,
-                    ProfessionalId = appointment.Professional?.Id,
-                    StudyId = appointment.Study?.Id,
-                    UserId = appointment.User.Id
+                    ProfessionalId = appointment.ProfessionalId,
+                    StudyId = appointment.StudyId,
+                    UserId = appointment.UserId
                 })
                 .OrderBy(a => a.AppointmentDate ?? DateOnly.MaxValue)
                 .ToList();

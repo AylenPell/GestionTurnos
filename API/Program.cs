@@ -45,6 +45,12 @@ await SpecialtySeeder.SeedAsync(
     app.Services,
     migrateDb: app.Environment.IsDevelopment()
 );
+
+await StudySeeder.SeedAsync(
+    app.Services,
+    migrateDb: app.Environment.IsDevelopment()
+);
+
 await ProfessionalSeeder.SeedAsync(
     app.Services,
     migrateDb: app.Environment.IsDevelopment()
