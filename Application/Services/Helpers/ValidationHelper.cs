@@ -113,6 +113,37 @@ namespace Application.Services.Helpers
             return true;
         }
 
+        public static bool AppointmentDateValidator(DateOnly? appointmentDate)
+        {
+            if (appointmentDate is null)
+                return true;
 
-}
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+
+            if (appointmentDate < today)
+                return false;
+
+            DateOnly maxDate = today.AddDays(60);
+            if (appointmentDate > maxDate)
+                return false;
+
+            return true;
+        }
+
+        public static bool AppointmentTimeValidator(TimeOnly? appointmentTime)
+        {
+            if (appointmentTime is null)
+                return true;
+
+            TimeOnly start = new TimeOnly(8, 0);  
+            TimeOnly end = new TimeOnly(20, 0);   
+
+            if (appointmentTime < start || appointmentTime > end)
+                return false;
+
+            return true;
+        }
+
+
+    }
 }
