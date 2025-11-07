@@ -1,5 +1,6 @@
 ﻿using Application.Abstraction;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories
 {
@@ -14,13 +15,13 @@ namespace Infrastructure.Persistence.Repositories
         {
           return _context.Users.FirstOrDefault(u => u.DNI == DNI);
         }
-        //public bool Create(User user)
-        //{
-        //    _context.Users.Add(user);
-        //    _context.SaveChanges();
 
-        //    return true;
-        //}
+        public User? Authenticator(string user, string password)
+        {
+            return _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefault(u => u.DNI == user  && u.Password == password && u.IsActive);
+        }
 
     }
 }

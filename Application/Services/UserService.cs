@@ -3,6 +3,9 @@ using Contracts.User.Requests;
 using Contracts.User.Responses;
 using Domain.Entities;
 using Application.Services.Helpers;
+using Contracts.Authentication;
+using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
 
 namespace Application.Services
 {
@@ -12,6 +15,7 @@ namespace Application.Services
         public UserService (IUserRepository userRepository)
         {
             _userRepository = userRepository;
+
         }
         public List<UserResponse> GetAll()
         {
