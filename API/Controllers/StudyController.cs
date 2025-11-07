@@ -1,12 +1,14 @@
 ﻿using Application.Services;
 using Contracts.Study.Requests;
 using Contracts.Study.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Policy = "SuperAdminOrAdminPolicy")]
 public class StudyController : ControllerBase
 {
     private readonly IStudyService _studyService;

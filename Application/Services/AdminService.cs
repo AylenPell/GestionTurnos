@@ -1,24 +1,24 @@
 ﻿using Application.Abstraction;
-using Contracts.User.Requests;
-using Contracts.User.Responses;
+using Contracts.Admin.Requests;
+using Contracts.Admin.Responses;
 using Domain.Entities;
 using Application.Services.Helpers;
 
 namespace Application.Services
 {
-    public class UserService : IUserService
+    public class AdminService : IAdminService
     {
         private readonly IUserRepository _userRepository;
-        public UserService (IUserRepository userRepository)
+        public AdminService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
 
         }
-        public List<UserResponse> GetAll()
+        public List<AdminUserResponse> GetAll()
         {
             var usersList = _userRepository
                 .GetAll()
-                .Select(user => new UserResponse
+                .Select(user => new AdminUserResponse
                 {
                     Id = user.Id,
                     Name = user.Name,
@@ -35,11 +35,11 @@ namespace Application.Services
 
             return usersList;
         }
-        public UserResponse? GetById(int id)
+        public AdminUserResponse? GetById(int id)
         {
             return _userRepository
                 .GetById(id) is User user
-                ? new UserResponse
+                ? new AdminUserResponse
                 {
                     Id = user.Id,
                     Name = user.Name,
@@ -55,11 +55,11 @@ namespace Application.Services
                 }
                 : null;
         }
-        public UserResponse? GetByDNI(string dni)
+        public AdminUserResponse? GetByDNI(string dni)
         {
             return _userRepository
                 .GetByDNI(dni) is User user
-                ? new UserResponse
+                ? new AdminUserResponse
                 {
                     Id = user.Id,
                     Name = user.Name,
@@ -75,7 +75,7 @@ namespace Application.Services
                 }
                 : null;
         }
-        public bool Create(CreateUserRequest user, out string message, out int createdId)
+        public bool Create(AdminCreateUserRequest user, out string message, out int createdId)
         {
             message = "";
             createdId = 0;
@@ -138,7 +138,7 @@ namespace Application.Services
         }
 
 
-        public bool Update(int id, UpdateUserRequest user, out string message)
+        public bool Update(int id, AdminUpdateUserRequest user, out string message)
         {
             message = "";
 
@@ -172,7 +172,7 @@ namespace Application.Services
                 message = "La fecha de nacimiento no es válida.";
                 return false;
             }
-            if (user.Password != null &&  !ValidationHelper.PasswordValidator(user.Password))
+            if (user.Password != null && !ValidationHelper.PasswordValidator(user.Password))
             {
                 message = "La contraseña no es válida.";
                 return false;
@@ -222,7 +222,5 @@ namespace Application.Services
             message = "Usuario eliminado exitosamente.";
             return true;
         }
-
     }
-    
 }

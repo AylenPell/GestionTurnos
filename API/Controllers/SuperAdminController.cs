@@ -1,6 +1,6 @@
 ﻿using Application.Services;
-using Contracts.User.Requests;
-using Contracts.User.Responses;
+using Contracts.SuperAdmin.Requests;
+using Contracts.SuperAdmin.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,26 +8,26 @@ namespace API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-[Authorize(Policy = "UserPolicy")]
-public class UserController : ControllerBase
+[Authorize(Policy = "SuperAdminPolicy")]
+public class SuperAdminUserController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly ISuperAdminService _superAdminService;
 
-    public UserController(IUserService userService)
+    public SuperAdminUserController(ISuperAdminService superAdminService)
     {
-        _userService = userService;
+        _superAdminService = superAdminService;
     }
     [HttpGet]
     public IActionResult GetAll()
     {
-        var users = _userService.GetAll();
+        var users = _superAdminService.GetAll();
         return Ok(users);
     }
 
-    [HttpGet("{id}", Name = "GetUserById")]
-    public ActionResult<UserResponse?> GetById([FromRoute] int id)
+    [HttpGet("{id}", Name = "SuperAdminGetUserById")]
+    public ActionResult<SuperAdminUserResponse?> GetById([FromRoute] int id)
     {
-        var user = _userService.GetById(id);
+        var user = _superAdminService.GetById(id);
         if (user == null)
         {
             return NotFound();
@@ -36,9 +36,9 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("dni/{dni}")]
-    public ActionResult<UserResponse?> GetByDNI([FromRoute] string dni)
+    public ActionResult<SuperAdminUserResponse?> GetByDNI([FromRoute] string dni)
     {
-        var user = _userService.GetByDNI(dni);
+        var user = _superAdminService.GetByDNI(dni);
         if (user == null)
         {
             return NotFound("Usuario no encontrado.");
@@ -46,11 +46,11 @@ public class UserController : ControllerBase
         return Ok(user);
     }
     [HttpPost]
-    public ActionResult Create([FromBody] CreateUserRequest user)
+    public ActionResult Create([FromBody] SuperAdminCreateUserRequest user)
     {
         string message;
         int createdId;
-        bool creado = _userService.Create(user, out message, out createdId);
+        bool creado = _superAdminService.Create(user, out message, out createdId);
 
         if (!creado)
         {
@@ -61,11 +61,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public ActionResult Update([FromRoute] int id, [FromBody] UpdateUserRequest user)
+    public ActionResult Update([FromRoute] int id, [FromBody] SuperAdminUpdateUserRequest user)
     {
         string message;
 
-        var isUpdated = _userService.Update(id, user, out message);
+        var isUpdated = _superAdminService.Update(id, user, out message);
 
         if (!isUpdated)
             return Conflict(new { message });
@@ -78,7 +78,7 @@ public class UserController : ControllerBase
     public ActionResult Delete([FromRoute] int id)
     {
         string message;
-        var isDeleted = _userService.Delete(id, out message);
+        var isDeleted = _superAdminService.Delete(id, out message);
         if (!isDeleted)
             return Conflict("Error al eliminar el usuario");
 

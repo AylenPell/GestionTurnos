@@ -1,24 +1,24 @@
 ﻿using Application.Abstraction;
-using Contracts.User.Requests;
-using Contracts.User.Responses;
+using Contracts.SuperAdmin.Requests;
+using Contracts.SuperAdmin.Responses;
 using Domain.Entities;
 using Application.Services.Helpers;
 
 namespace Application.Services
 {
-    public class UserService : IUserService
+    public class SuperAdminService : ISuperAdminService
     {
         private readonly IUserRepository _userRepository;
-        public UserService (IUserRepository userRepository)
+        public SuperAdminService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
 
         }
-        public List<UserResponse> GetAll()
+        public List<SuperAdminUserResponse> GetAll()
         {
             var usersList = _userRepository
                 .GetAll()
-                .Select(user => new UserResponse
+                .Select(user => new SuperAdminUserResponse
                 {
                     Id = user.Id,
                     Name = user.Name,
@@ -30,16 +30,17 @@ namespace Application.Services
                     Address = user.Address,
                     Phone = user.Phone,
                     HealthInsurance = user.HealthInsurance,
-                    HealthInsurancePlan = user.HealthInsurancePlan
+                    HealthInsurancePlan = user.HealthInsurancePlan,
+                    RoleId = user.RoleId
                 }).ToList();
 
             return usersList;
         }
-        public UserResponse? GetById(int id)
+        public SuperAdminUserResponse? GetById(int id)
         {
             return _userRepository
                 .GetById(id) is User user
-                ? new UserResponse
+                ? new SuperAdminUserResponse
                 {
                     Id = user.Id,
                     Name = user.Name,
@@ -51,15 +52,16 @@ namespace Application.Services
                     Address = user.Address,
                     Phone = user.Phone,
                     HealthInsurance = user.HealthInsurance,
-                    HealthInsurancePlan = user.HealthInsurancePlan
+                    HealthInsurancePlan = user.HealthInsurancePlan,
+                    RoleId = user.RoleId
                 }
                 : null;
         }
-        public UserResponse? GetByDNI(string dni)
+        public SuperAdminUserResponse? GetByDNI(string dni)
         {
             return _userRepository
                 .GetByDNI(dni) is User user
-                ? new UserResponse
+                ? new SuperAdminUserResponse
                 {
                     Id = user.Id,
                     Name = user.Name,
@@ -71,11 +73,12 @@ namespace Application.Services
                     Address = user.Address,
                     Phone = user.Phone,
                     HealthInsurance = user.HealthInsurance,
-                    HealthInsurancePlan = user.HealthInsurancePlan
+                    HealthInsurancePlan = user.HealthInsurancePlan,
+                    RoleId = user.RoleId
                 }
                 : null;
         }
-        public bool Create(CreateUserRequest user, out string message, out int createdId)
+        public bool Create(SuperAdminCreateUserRequest user, out string message, out int createdId)
         {
             message = "";
             createdId = 0;
@@ -115,6 +118,13 @@ namespace Application.Services
                 return false;
             }
 
+            var roleId = user.RoleId ?? 3;
+            if (roleId < 1 || roleId > 4)
+            {
+                message = "El rol indicado no es válido.";
+                return false;
+            }
+
             var newUser = new User
             {
                 Name = user.Name,
@@ -127,7 +137,8 @@ namespace Application.Services
                 Address = user.Address,
                 Phone = user.Phone,
                 HealthInsurance = user.HealthInsurance,
-                HealthInsurancePlan = user.HealthInsurancePlan
+                HealthInsurancePlan = user.HealthInsurancePlan,
+                RoleId = roleId
             };
 
             _userRepository.Create(newUser);
@@ -138,7 +149,7 @@ namespace Application.Services
         }
 
 
-        public bool Update(int id, UpdateUserRequest user, out string message)
+        public bool Update(int id, SuperAdminUpdateUserRequest user, out string message)
         {
             message = "";
 
@@ -172,10 +183,20 @@ namespace Application.Services
                 message = "La fecha de nacimiento no es válida.";
                 return false;
             }
-            if (user.Password != null &&  !ValidationHelper.PasswordValidator(user.Password))
+            if (user.Password != null && !ValidationHelper.PasswordValidator(user.Password))
             {
                 message = "La contraseña no es válida.";
                 return false;
+            }
+
+            if (user.RoleId.HasValue)
+            {
+                if (user.RoleId.Value < 1 || user.RoleId.Value > 4)
+                {
+                    message = "El rol indicado no es válido.";
+                    return false;
+                }
+                existingUser.RoleId = user.RoleId.Value; // ← NUEVO
             }
 
             existingUser.Name = user.Name ?? existingUser.Name;
@@ -222,7 +243,5 @@ namespace Application.Services
             message = "Usuario eliminado exitosamente.";
             return true;
         }
-
     }
-    
 }

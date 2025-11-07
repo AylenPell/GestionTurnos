@@ -2,12 +2,14 @@
 using Contracts.Specialty.Requests;
 using Contracts.User.Requests;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize(Policy = "SuperAdminOrAdminPolicy")]
     public class SpecialtyController : ControllerBase
     {
         private readonly ISpecialtyService _specialtyService;

@@ -1,6 +1,6 @@
 ﻿using Application.Services;
-using Contracts.User.Requests;
-using Contracts.User.Responses;
+using Contracts.Admin.Requests;
+using Contracts.Admin.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,26 +8,26 @@ namespace API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-[Authorize(Policy = "UserPolicy")]
-public class UserController : ControllerBase
+[Authorize(Policy = "AdminPolicy")]
+public class AdminUserController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly IAdminService _adminService;
 
-    public UserController(IUserService userService)
+    public AdminUserController(IAdminService adminService)
     {
-        _userService = userService;
+        _adminService = adminService;
     }
     [HttpGet]
     public IActionResult GetAll()
     {
-        var users = _userService.GetAll();
+        var users = _adminService.GetAll();
         return Ok(users);
     }
 
-    [HttpGet("{id}", Name = "GetUserById")]
-    public ActionResult<UserResponse?> GetById([FromRoute] int id)
+    [HttpGet("{id}", Name = "AdminGetUserById")]
+    public ActionResult<AdminUserResponse?> GetById([FromRoute] int id)
     {
-        var user = _userService.GetById(id);
+        var user = _adminService.GetById(id);
         if (user == null)
         {
             return NotFound();
@@ -36,9 +36,9 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("dni/{dni}")]
-    public ActionResult<UserResponse?> GetByDNI([FromRoute] string dni)
+    public ActionResult<AdminUserResponse?> GetByDNI([FromRoute] string dni)
     {
-        var user = _userService.GetByDNI(dni);
+        var user = _adminService.GetByDNI(dni);
         if (user == null)
         {
             return NotFound("Usuario no encontrado.");
@@ -46,11 +46,11 @@ public class UserController : ControllerBase
         return Ok(user);
     }
     [HttpPost]
-    public ActionResult Create([FromBody] CreateUserRequest user)
+    public ActionResult Create([FromBody] AdminCreateUserRequest user)
     {
         string message;
         int createdId;
-        bool creado = _userService.Create(user, out message, out createdId);
+        bool creado = _adminService.Create(user, out message, out createdId);
 
         if (!creado)
         {
@@ -61,11 +61,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public ActionResult Update([FromRoute] int id, [FromBody] UpdateUserRequest user)
+    public ActionResult Update([FromRoute] int id, [FromBody] AdminUpdateUserRequest user)
     {
         string message;
 
-        var isUpdated = _userService.Update(id, user, out message);
+        var isUpdated = _adminService.Update(id, user, out message);
 
         if (!isUpdated)
             return Conflict(new { message });
@@ -78,7 +78,7 @@ public class UserController : ControllerBase
     public ActionResult Delete([FromRoute] int id)
     {
         string message;
-        var isDeleted = _userService.Delete(id, out message);
+        var isDeleted = _adminService.Delete(id, out message);
         if (!isDeleted)
             return Conflict("Error al eliminar el usuario");
 

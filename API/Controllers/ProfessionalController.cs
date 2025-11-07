@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Contracts.Professional.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,8 @@ namespace API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize(Policy = "SuperAdminOrAdminPolicy")]
+
     public class ProfessionalController : ControllerBase
     {
         private readonly IProfessionalService _professionalService;
