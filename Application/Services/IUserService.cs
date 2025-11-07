@@ -1,4 +1,5 @@
-﻿using Contracts.User.Requests;
+﻿using Contracts.Authentication;
+using Contracts.User.Requests;
 using Contracts.User.Responses;
 
 namespace Application.Services

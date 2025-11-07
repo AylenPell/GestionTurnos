@@ -11,6 +11,7 @@ namespace Application.Abstraction
     public interface IUserRepository : IBaseRepository<User>
     {
         User? GetByDNI(string dni);
+        User? Authenticator(string user, string password);
 
     }
 }
