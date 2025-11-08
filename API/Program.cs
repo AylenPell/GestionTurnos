@@ -62,6 +62,7 @@ builder.Services.AddAuthorization(Options =>
 {
     Options.AddPolicy("ProfessionalPolicy", policy => policy.RequireRole("Professional", "SuperAdmin"));
     Options.AddPolicy("UserPolicy", policy => policy.RequireRole("User", "SuperAdmin"));
+    Options.AddPolicy("UserAndAdminPolicy", policy => policy.RequireRole("User", "Admin", "SuperAdmin"));
     Options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin", "SuperAdmin"));
     Options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("SuperAdmin"));
 });

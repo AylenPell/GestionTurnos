@@ -65,20 +65,6 @@ namespace Application.Services
 
             return appointmentLists;
         }
-        public UpdateAppointmentRequest Update(AppointmentResponse appointment)
-        {
-            var updateRequest = new UpdateAppointmentRequest
-            {
-                IsPatient = appointment.IsPatient,
-                AppointmentType = appointment.AppointmentType,
-                AppointmentDate = appointment.AppointmentDate,
-                AppointmentTime = appointment.AppointmentTime,
-                AppointmentStatus = appointment.AppointmentStatus,
-                ProfessionalId = appointment.ProfessionalId,
-                StudyId = appointment.StudyId
-            };
-            return updateRequest;
-        }
         public bool Delete(int id, out string message)
         {
             message = "";
@@ -127,20 +113,6 @@ namespace Application.Services
             message = "";
             createdId = 0;
 
-            var existingProfessional = _professionalRepository.GetById(appointment.ProfessionalId.Value);
-            if (existingProfessional == null || existingProfessional.IsActive == false)
-            {
-                message = "El profesional no existe o fue desactivado.";
-                return false;
-            }
-
-            var existingStudy = _studyRepository.GetById(appointment.StudyId.Value);
-            if (existingStudy == null || existingStudy.IsActive == false)
-            {
-                message = "El estudio no existe o fue desactivado.";
-                return false;
-            }
-
             var existingUser = _userRepository.GetById(appointment.UserId);
             if (existingUser == null || existingUser.IsActive == false)
             {
@@ -148,9 +120,29 @@ namespace Application.Services
                 return false;
             }
 
+            if (appointment.ProfessionalId.HasValue)
+            {
+                var existingProfessional = _professionalRepository.GetById(appointment.ProfessionalId.Value);
+                if (existingProfessional == null || existingProfessional.IsActive == false)
+                {
+                    message = "El profesional no existe o fue desactivado.";
+                    return false;
+                }
+            }
+
+            if (appointment.StudyId.HasValue)
+            {
+                var existingStudy = _studyRepository.GetById(appointment.StudyId.Value);
+                if (existingStudy == null || existingStudy.IsActive == false)
+                {
+                    message = "El estudio no existe o fue desactivado.";
+                    return false;
+                }
+            }
+
             if (appointment.AppointmentDate != null)
             {
-                if(!ValidationHelper.AppointmentDateValidator(appointment.AppointmentDate))
+                if (!ValidationHelper.AppointmentDateValidator(appointment.AppointmentDate))
                 {
                     message = "El turno debe ser dentro de los próximos 60 días.";
                     return false;
@@ -170,11 +162,10 @@ namespace Application.Services
             {
                 IsPatient = appointment.IsPatient,
                 AppointmentType = appointment.AppointmentType,
-                AppointmentDate = appointment.AppointmentDate, 
-                AppointmentTime = appointment.AppointmentTime,  
-                AppointmentStatus = appointment.AppointmentStatus,
+                AppointmentDate = appointment.AppointmentDate,
+                AppointmentTime = appointment.AppointmentTime,
                 UserId = appointment.UserId,
-                ProfessionalId = appointment.ProfessionalId,
+                ProfessionalId = appointment.ProfessionalId, 
                 StudyId = appointment.StudyId
             };
 
@@ -189,6 +180,30 @@ namespace Application.Services
             message = "Solicitud de turno creada exitosamente.";
             return true;
         }
+
+        public bool Update(int id, UpdateAppointmentRequest request, out string message)
+        {
+            message = "";
+
+            var appointment = _appointmentRepository.GetById(id);
+            if (appointment == null)
+            {
+                message = "Solicitud no encontrada.";
+                return false;
+            }
+            if (request.AppointmentDate == null || request.AppointmentTime == null)
+            {
+                message = "Debe especificar una fecha y hora válidas.";
+                return false;
+            }
+            appointment.AppointmentDate = request.AppointmentDate;
+            appointment.AppointmentTime = request.AppointmentTime;
+
+            _appointmentRepository.Update(appointment);
+            message = "Turno actualizado correctamente.";
+            return true;
+        }
+
     }
 
 }

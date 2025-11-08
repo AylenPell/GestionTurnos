@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Contracts.Appointment.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -16,13 +17,15 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "AdminPolicy")]
     public IActionResult GetAll()
     {
         var list = _appointmentService.GetAll();
         return Ok(list);
     }
 
-    [HttpGet("user/{userId:int}")]
+    [HttpGet("user/{userId}")]
+    [Authorize(Policy = "UserAndAdminPolicy")]
     public IActionResult GetByUserId([FromRoute] int userId)
     {
         var list = _appointmentService.GetByUserId(userId);
@@ -30,6 +33,7 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "UserAndAdminPolicy")]
     public IActionResult Create([FromBody] CreateAppointmentRequest appointment)
     {
         var ok = _appointmentService.Create(appointment, out var message, out var createdId);
@@ -40,7 +44,23 @@ public class AppointmentController : ControllerBase
         return Created($"/api/appointment/{createdId}", new { id = createdId, message });
     }
 
+    [HttpPut("{id}")]
+    [Authorize(Policy = "AdminPolicy")]
+    public IActionResult Update([FromRoute] int id, [FromBody] UpdateAppointmentRequest request)
+    {
+        if (request == null)
+            return BadRequest(new { message = "La solicitud no puede ser nula." });
+
+        var ok = _appointmentService.Update(id, request, out var message);
+
+        if (!ok)
+            return Conflict(new { message });
+
+        return Ok(new { message });
+    }
+
     [HttpPatch("{id}/status")]
+    [Authorize(Policy = "UserAndAdminPolicy")]
     public IActionResult UpdateStatus([FromRoute] int id, [FromBody] UpdateStatusAppointmentRequest appointment)
     {
         var ok = _appointmentService.UpdateStatus(id, appointment, out var message);
@@ -52,6 +72,7 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = "UserAndAdminPolicy")]
     public IActionResult Delete([FromRoute] int id)
     {
         var ok = _appointmentService.Delete(id, out var message);

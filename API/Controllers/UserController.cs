@@ -1,8 +1,10 @@
 ﻿using Application.Services;
 using Contracts.User.Requests;
 using Contracts.User.Responses;
+using Contracts.Appointment.Responses; // <-- ajustá si tu DTO está en otro namespace
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers;
 
@@ -12,76 +14,86 @@ namespace API.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IAppointmentService _appointmentService; // <-- nuevo
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IAppointmentService appointmentService)
     {
         _userService = userService;
+        _appointmentService = appointmentService;
     }
-    [HttpGet]
-    public IActionResult GetAll()
+    private int? GetUserId() // busca en las claims
     {
-        var users = _userService.GetAll();
-        return Ok(users);
-    }
-
-    [HttpGet("{id}", Name = "GetUserById")]
-    public ActionResult<UserResponse?> GetById([FromRoute] int id)
-    {
-        var user = _userService.GetById(id);
-        if (user == null)
-        {
-            return NotFound();
-        }
-        return Ok(user);
+        var idValue = User.FindFirst("sub")?.Value
+                   ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return int.TryParse(idValue, out var id) ? id : (int?)null;
     }
 
-    [HttpGet("dni/{dni}")]
-    public ActionResult<UserResponse?> GetByDNI([FromRoute] string dni)
+    private string? GetUserDni() // busca en las claims
     {
+        return User.FindFirst("dni")?.Value;
+    }
+
+    [HttpGet("me/appointments")]
+    public ActionResult<List<AppointmentResponse>> GetAllMyAppointments()
+    {
+        var userId = GetUserId();
+        if (userId is null) return Unauthorized(new { message = "No se pudo obtener el id de usuario desde el token." });
+
+        var appointments = _appointmentService.GetByUserId(userId.Value);
+        return Ok(appointments);
+    }
+
+    [HttpGet("me")]
+    public ActionResult<UserResponse?> GetMe()
+    {
+        var userId = GetUserId();
+        if (userId is null) return Unauthorized(new { message = "No se pudo obtener el id de usuario desde el token." });
+
+        var user = _userService.GetById(userId.Value);
+        return user is null ? NotFound() : Ok(user);
+    }
+
+    [HttpGet("me/dni")]
+    public ActionResult<UserResponse?> GetByMyDni()
+    {
+        var dni = GetUserDni();
+        if (string.IsNullOrWhiteSpace(dni)) return Unauthorized(new { message = "No se pudo obtener el DNI desde el token." });
+
         var user = _userService.GetByDNI(dni);
-        if (user == null)
-        {
-            return NotFound("Usuario no encontrado.");
-        }
-        return Ok(user);
+        return user is null ? NotFound("Usuario no encontrado.") : Ok(user);
     }
+
     [HttpPost]
+    [AllowAnonymous]
     public ActionResult Create([FromBody] CreateUserRequest user)
     {
         string message;
         int createdId;
         bool creado = _userService.Create(user, out message, out createdId);
+        if (!creado) return Conflict(new { message });
 
-        if (!creado)
-        {
-            return Conflict(new { message });
-        }
-
-        return CreatedAtAction(nameof(GetById), new { id = createdId }, new { id = createdId, message });
+        return CreatedAtAction(nameof(GetMe), new { }, new { id = createdId, message });
     }
 
-    [HttpPut("{id}")]
-    public ActionResult Update([FromRoute] int id, [FromBody] UpdateUserRequest user)
+    [HttpPut("me")]
+    public ActionResult UpdateMe([FromBody] UpdateUserRequest user)
     {
+        var userId = GetUserId();
+        if (userId is null) return Unauthorized(new { message = "No se pudo obtener el id de usuario desde el token." });
+
         string message;
-
-        var isUpdated = _userService.Update(id, user, out message);
-
-        if (!isUpdated)
-            return Conflict(new { message });
-
-        return Ok(new { message });
+        var isUpdated = _userService.Update(userId.Value, user, out message);
+        return !isUpdated ? Conflict(new { message }) : Ok(new { message });
     }
 
-
-    [HttpDelete("{id}")]
-    public ActionResult Delete([FromRoute] int id)
+    [HttpDelete("me")]
+    public ActionResult DeleteMe()
     {
-        string message;
-        var isDeleted = _userService.Delete(id, out message);
-        if (!isDeleted)
-            return Conflict("Error al eliminar el usuario");
+        var userId = GetUserId();
+        if (userId is null) return Unauthorized(new { message = "No se pudo obtener el id de usuario desde el token." });
 
-        return NoContent();
+        string message;
+        var isDeleted = _userService.Delete(userId.Value, out message);
+        return !isDeleted ? Conflict(new { message }) : NoContent();
     }
 }
