@@ -12,12 +12,13 @@ namespace Infrastructure.ExternalServices
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IProfessionalRepository _professionalRepository;
         private readonly IConfiguration _configuration;
-        public AuthService(IUserRepository userRepository, IConfiguration configuration)
+        public AuthService(IUserRepository userRepository, IConfiguration configuration, IProfessionalRepository professionalRepository)
         {
             _userRepository = userRepository;
             _configuration = configuration;
-
+            _professionalRepository = professionalRepository;
         }
         public string Login(AuthCredentials credentials, out string message)
         {
@@ -34,6 +35,37 @@ namespace Infrastructure.ExternalServices
                 new Claim("sub", authenticatedUser.Id.ToString()),
                 new Claim(ClaimTypes.Role, authenticatedUser.Role.RoleName.ToString()),
                 new Claim("dni", authenticatedUser.DNI)
+            };
+
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(2),
+                signingCredentials: creds
+            );
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            message = "Inicio de sesión exitoso.";
+            return tokenString;
+        }
+
+        public string ProfessionalLogin(AuthCredentials credentials, out string message)
+        {
+            message = ""; 
+            var authenticatedProfessional = _professionalRepository.ProfessionalAuthenticator(credentials.User, credentials.Password);
+            if (authenticatedProfessional == null)
+            {
+                message = "Credenciales inválidas.";
+                return string.Empty;
+            }
+
+            var claims = new[]
+            {
+                new Claim("sub", authenticatedProfessional.Id.ToString()),
+                new Claim(ClaimTypes.Role, authenticatedProfessional.Role.RoleName.ToString()),
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));

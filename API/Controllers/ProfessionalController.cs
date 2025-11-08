@@ -8,7 +8,7 @@ namespace API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Policy = "SuperAdminOrAdminPolicy")]
+    [Authorize(Policy = "AdminPolicy")]
 
     public class ProfessionalController : ControllerBase
     {

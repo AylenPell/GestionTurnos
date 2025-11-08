@@ -9,7 +9,7 @@ namespace API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Policy = "SuperAdminOrAdminPolicy")]
+    [Authorize(Policy = "AdminPolicy")]
     public class SpecialtyController : ControllerBase
     {
         private readonly ISpecialtyService _specialtyService;

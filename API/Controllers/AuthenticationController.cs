@@ -15,7 +15,7 @@ namespace API.Controllers
             _authService = authService;
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public ActionResult<string> Login([FromBody] AuthCredentials credentials)
         {
             var token = _authService.Login(credentials, out string message);
@@ -26,5 +26,15 @@ namespace API.Controllers
             return Ok(token);
         }
 
+        [HttpPost("ProfessionalLogin")]
+        public ActionResult<string> ProfessionalLogin([FromBody] AuthCredentials credentials)
+        {
+            var token = _authService.ProfessionalLogin(credentials, out string message);
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized(message);
+            }
+            return Ok(token);
+        }
     }
 }

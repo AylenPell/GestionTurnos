@@ -11,6 +11,7 @@ namespace Contracts.Professional.Responses
         public string AttentionSchedule { get; set; }
         public int RoleId { get; set; }
         public int SpecialtiesCount { get; set; }
+        public string Email { get; set; }
 
     }
 }

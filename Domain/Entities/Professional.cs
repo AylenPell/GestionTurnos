@@ -13,6 +13,8 @@ namespace Domain.Entities
         public int RoleId { get; set; } = 4;
         public Role Role { get; set; }
         public ICollection<ProfessionalSpecialty> ProfessionalSpecialties { get; set; } = new List<ProfessionalSpecialty>();
+        public string Email { get; set; }
+        public string Password { get; set; }
 
     }
 }

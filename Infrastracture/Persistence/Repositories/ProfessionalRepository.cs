@@ -25,5 +25,12 @@ namespace Infrastructure.Persistence.Repositories
                 .Include(s => s.ProfessionalSpecialties)
                 .FirstOrDefault(s => s.License == license && s.IsActive);
         }
+
+        public Professional? ProfessionalAuthenticator(string user, string password)
+        {
+            return _context.Professionals
+                .Include(p => p.Role)
+                .FirstOrDefault(p => p.Email == user && p.Password == password && p.IsActive);
+        }
     }
 }

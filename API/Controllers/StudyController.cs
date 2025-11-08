@@ -8,7 +8,7 @@ namespace API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Policy = "SuperAdminOrAdminPolicy")]
+[Authorize(Policy = "AdminPolicy")]
 public class StudyController : ControllerBase
 {
     private readonly IStudyService _studyService;

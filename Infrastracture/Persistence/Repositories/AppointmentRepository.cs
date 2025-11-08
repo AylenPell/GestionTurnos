@@ -1,7 +1,5 @@
 ﻿
 using Application.Abstraction;
-using Contracts.Appointment.Requests;
-using Contracts.Appointment.Responses;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 

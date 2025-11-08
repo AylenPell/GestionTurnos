@@ -17,5 +17,9 @@ namespace Contracts.Professional.Requests
         public string AttentionSchedule { get; set; }
         public int? RoleId { get; set; } 
         public int? SpecialtiesCount { get; set; }
+        [Required(ErrorMessage = "El email es requerido.")]
+        public string? Email { get; set; }
+        [Required(ErrorMessage = "La contraseña es requerida.")]
+        public string? Password { get; set; }
     }
 }

@@ -25,7 +25,8 @@ namespace Application.Services
                     License = professional.License,
                     AttentionSchedule = professional.AttentionSchedule,
                     RoleId = professional.RoleId,
-                    SpecialtiesCount = professional.ProfessionalSpecialties.Count 
+                    SpecialtiesCount = professional.ProfessionalSpecialties.Count,
+                    Email = professional.Email
                 })
                 .OrderBy(professional => professional.Name)
                 .ToList();
@@ -50,7 +51,8 @@ namespace Application.Services
                 License = professional.License,
                 AttentionSchedule = professional.AttentionSchedule,
                 RoleId = professional.RoleId,
-                SpecialtiesCount = professional.ProfessionalSpecialties.Count
+                SpecialtiesCount = professional.ProfessionalSpecialties.Count,
+                Email = professional.Email
             };
             message = "Profesional encontrado.";
             return professionalResponse;
@@ -73,7 +75,8 @@ namespace Application.Services
                 License = professional.License,
                 AttentionSchedule = professional.AttentionSchedule,
                 RoleId = professional.RoleId,
-                SpecialtiesCount = professional.ProfessionalSpecialties.Count
+                SpecialtiesCount = professional.ProfessionalSpecialties.Count,
+                Email = professional.Email
             };
             message = "Profesional encontrado:";
             return professionalResponse; 
@@ -91,6 +94,7 @@ namespace Application.Services
             var professionalLastName = professional.LastName.Trim().ToLower();
             var professionalLicense = professional.License.Trim().ToLower();
             var professionalAttentionSchedule = professional.AttentionSchedule.Trim().ToLower();
+            var professionalEmail = professional.Email?.Trim().ToLower();
             var existingProfessional = _professionalRepository.GetByLicense(professional.License.Trim().ToLower());
 
             if (existingProfessional != null)
@@ -101,9 +105,11 @@ namespace Application.Services
             var newProfessional = new Domain.Entities.Professional
             {
                 Name = professionalName,
-                LastName = professional.LastName.Trim().ToLower(),
-                License = professional.License.Trim().ToLower(),
-                AttentionSchedule = professional.AttentionSchedule.Trim().ToLower(),
+                LastName = professionalLastName,
+                License = professionalLicense,
+                AttentionSchedule = professionalAttentionSchedule,
+                Email = professionalEmail,
+                Password = professional.Password.Trim(),
             };
             _professionalRepository.Create(newProfessional);
             createdId = newProfessional.Id;
@@ -142,6 +148,12 @@ namespace Application.Services
 
             if (!string.IsNullOrWhiteSpace(professional.AttentionSchedule))
                 existing.AttentionSchedule = professional.AttentionSchedule.Trim().ToLower();
+
+            if (!string.IsNullOrWhiteSpace(professional.Email))
+                existing.Email = professional.Email.Trim().ToLower();
+
+            if (!string.IsNullOrWhiteSpace(professional.Password))
+                existing.Password = professional.Password.Trim();
 
             var updated = _professionalRepository.Update(existing);
             if (!updated)

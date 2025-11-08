@@ -40,7 +40,7 @@ public class AppointmentController : ControllerBase
         return Created($"/api/appointment/{createdId}", new { id = createdId, message });
     }
 
-    [HttpPatch("{id:int}/status")]
+    [HttpPatch("{id}/status")]
     public IActionResult UpdateStatus([FromRoute] int id, [FromBody] UpdateStatusAppointmentRequest appointment)
     {
         var ok = _appointmentService.UpdateStatus(id, appointment, out var message);
@@ -51,7 +51,7 @@ public class AppointmentController : ControllerBase
         return Ok(new { message });
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id}")]
     public IActionResult Delete([FromRoute] int id)
     {
         var ok = _appointmentService.Delete(id, out var message);

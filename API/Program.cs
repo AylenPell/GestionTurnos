@@ -7,7 +7,6 @@ using Infrastructure.Persistence.Repositories;
 using Infrastructure.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -61,11 +60,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization(Options =>
 {
-    Options.AddPolicy("ProfessionalPolicy", policy => policy.RequireRole("Professional"));
-    Options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
-    Options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+    Options.AddPolicy("ProfessionalPolicy", policy => policy.RequireRole("Professional", "SuperAdmin"));
+    Options.AddPolicy("UserPolicy", policy => policy.RequireRole("User", "SuperAdmin"));
+    Options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin", "SuperAdmin"));
     Options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("SuperAdmin"));
-    Options.AddPolicy("SuperAdminOrAdminPolicy", policy => policy.RequireRole("Admin", "SuperAdmin"));
 });
 
 #region Injections
@@ -76,6 +74,10 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 // superadmin
 builder.Services.AddScoped<ISuperAdminService, SuperAdminService>();
+// auth
+builder.Services.AddScoped<IAuthService, AuthService>();
+// professional schedule
+builder.Services.AddScoped<IProfessionalScheduleService, ProfessionalScheduleService>();
 // specialty
 builder.Services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
 builder.Services.AddScoped<ISpecialtyService, SpecialtyService>();
@@ -88,8 +90,6 @@ builder.Services.AddScoped<IStudyService, StudyService>();
 // appointment
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-// auth
-builder.Services.AddScoped<IAuthService, AuthService>();
 #endregion
 
 var app = builder.Build();
