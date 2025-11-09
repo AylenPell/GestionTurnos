@@ -42,7 +42,7 @@ builder.Services.AddSwaggerGen(setupAction=>
         });
     });
 
-builder.Services.AddDbContext<GestorTurnosContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<GestorTurnosContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -58,6 +58,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
     });
+
 builder.Services.AddAuthorization(Options =>
 {
     Options.AddPolicy("ProfessionalPolicy", policy => policy.RequireRole("Professional", "SuperAdmin"));
@@ -96,6 +97,11 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 var app = builder.Build();
 
 #region Seeders
+await RoleSeeder.SeedAsync(
+    app.Services,
+    migrateDb: app.Environment.IsDevelopment()
+);
+
 await SpecialtySeeder.SeedAsync(
     app.Services,
     migrateDb: app.Environment.IsDevelopment()
