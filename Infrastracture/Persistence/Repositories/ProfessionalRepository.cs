@@ -26,6 +26,16 @@ namespace Infrastructure.Persistence.Repositories
                 .FirstOrDefault(s => s.License == license && s.IsActive);
         }
 
+        public List<Professional> GetBySpecialtyId(int specialtyId)
+        {
+            return _context.Professionals
+                .Include(p => p.ProfessionalSpecialties)
+                    .ThenInclude(ps => ps.Specialty)
+                .Where(p => p.IsActive &&
+                            p.ProfessionalSpecialties.Any(ps => ps.SpecialtyId == specialtyId))
+                .ToList();
+        }
+
         public Professional? ProfessionalAuthenticator(string user, string password)
         {
             return _context.Professionals

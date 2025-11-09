@@ -81,6 +81,29 @@ namespace Application.Services
             message = "Profesional encontrado:";
             return professionalResponse; 
         }
+        public List<ProfessionalResponse> GetBySpecialtyId(int specialtyId)
+        {
+            var professionals = _professionalRepository.GetBySpecialtyId(specialtyId);
+
+            var result = professionals
+                .Where(p => p.IsActive) 
+                .Select(p => new ProfessionalResponse
+                {
+                    Id = p.Id,
+                    IsActive = p.IsActive,
+                    Name = p.Name,
+                    LastName = p.LastName,
+                    License = p.License,
+                    AttentionSchedule = p.AttentionSchedule,
+                    RoleId = p.RoleId,
+                    SpecialtiesCount = p.ProfessionalSpecialties?.Count ?? 0
+                })
+                .OrderBy(p => p.Name)
+                .ThenBy(p => p.LastName)
+                .ToList();
+
+            return result;
+        }
         public bool Create(CreateProfessionalRequest professional, out string message, out int createdId)
         {
             message = "";

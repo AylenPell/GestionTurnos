@@ -116,6 +116,11 @@ await ProfessionalSeeder.SeedAsync(
     app.Services,
     migrateDb: app.Environment.IsDevelopment()
 );
+
+await ProfessionalSpecialtySeeder.SeedAsync(
+    app.Services,
+    migrateDb: app.Environment.IsDevelopment()
+);
 #endregion
 
 // Configure the HTTP request pipeline.
