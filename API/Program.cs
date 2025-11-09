@@ -102,6 +102,11 @@ await RoleSeeder.SeedAsync(
     migrateDb: app.Environment.IsDevelopment()
 );
 
+await PatientSeeder.SeedAsync(
+    app.Services,
+    migrateDb: app.Environment.IsDevelopment()
+);
+
 await SpecialtySeeder.SeedAsync(
     app.Services,
     migrateDb: app.Environment.IsDevelopment()
@@ -121,6 +126,12 @@ await ProfessionalSpecialtySeeder.SeedAsync(
     app.Services,
     migrateDb: app.Environment.IsDevelopment()
 );
+
+await AppointmentSeeder.SeedAsync(
+    app.Services,
+    migrateDb: app.Environment.IsDevelopment()
+);
+
 #endregion
 
 // Configure the HTTP request pipeline.
