@@ -61,13 +61,11 @@ public class AppointmentController : ControllerBase
 
     [HttpPatch("{id}/status")]
     [Authorize(Policy = "UserAndAdminPolicy")]
-    public IActionResult UpdateStatus([FromRoute] int id, [FromBody] UpdateStatusAppointmentRequest appointment)
+    public async Task<IActionResult> UpdateStatus([FromRoute] int id, [FromBody] UpdateStatusAppointmentRequest appointment)
     {
-        var ok = _appointmentService.UpdateStatus(id, appointment, out var message);
+        var (ok, message) = await _appointmentService.UpdateStatusAsync(id, appointment);
 
-        if (!ok)
-            return Conflict(new { message });
-
+        if (!ok) return Conflict(new { message });
         return Ok(new { message });
     }
 

@@ -1,4 +1,5 @@
-using Application.Abstraction;
+﻿using Application.Abstraction;
+using Application.Abstraction.Notifications;
 using Application.ExternalServices;
 using Application.Services;
 using Infrastructure;
@@ -7,8 +8,11 @@ using Infrastructure.Persistence.Repositories;
 using Infrastructure.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Polly;
+using System.Net.Http.Headers;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -92,7 +96,48 @@ builder.Services.AddScoped<IStudyService, StudyService>();
 // appointment
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+// twilio
+builder.Services.AddScoped<ITwilioWhatsAppService, TwilioWhatsAppService>();
+builder.Services.AddScoped<IAppointmentNotifier, TwilioAppointmentNotifier>();
+
 #endregion
+
+#region Pollys
+PollySettings twillioPollys = new()
+{
+    RetryCount = 2,
+    RetryAttemptInSec = 3,
+    BreakInSec = 120,
+    HandleEventsAllowed = 5
+};
+#endregion
+
+#region TwilioClientFactory
+// 🔹 Cargar configuración de Twilio
+builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
+
+// 🔹 Registrar HttpClient para Twilio + Polly
+builder.Services
+    .AddHttpClient("TwilioClient", (sp, client) =>
+    {
+        var settings = sp.GetRequiredService<IOptions<TwilioSettings>>().Value;
+
+        // URL base del API Twilio
+        client.BaseAddress = new Uri($"https://api.twilio.com/2010-04-01/Accounts/{settings.AccountSid}/");
+
+        // Header de autenticación básica (AccountSid + AuthToken)
+        var byteArray = System.Text.Encoding.ASCII.GetBytes($"{settings.AccountSid}:{settings.AuthToken}");
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+        client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+    })
+    // 🔹 Agregar políticas Polly (Retry + CircuitBreaker)
+    .AddPolicyHandler((sp, _) => ResiliencePolicies.GetWaitAndRetryPolicy(twillioPollys))
+    .AddPolicyHandler((sp, _) => ResiliencePolicies.GetCircuitBreakerPolicy(twillioPollys));
+#endregion
+
 
 var app = builder.Build();
 

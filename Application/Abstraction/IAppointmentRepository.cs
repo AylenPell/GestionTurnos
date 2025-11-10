@@ -13,5 +13,6 @@ namespace Application.Abstraction
     {
         IQueryable<Appointment> GetByUserId(int userId);
         //bool CreateWithReferences(Appointment item, int userId, int? professionalId, int? studyId);
+        Appointment? GetByIdWithRelations(int id);
     }
 }

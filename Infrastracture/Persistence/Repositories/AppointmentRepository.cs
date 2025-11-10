@@ -26,6 +26,15 @@ namespace Infrastructure.Persistence.Repositories
                 .Include(a => a.Professional) // si querés traer el profesional
                 .Include(a => a.Study);       // si querés traer el estudio
         }
+        public Appointment? GetByIdWithRelations(int id)
+        {
+            return _context.Appointments
+                .AsNoTracking()
+                .Include(a => a.User)
+                .Include(a => a.Professional)
+                .Include(a => a.Study)
+                .FirstOrDefault(a => a.Id == id && a.IsActive);
+        }
         public bool CreateWithReferences(Appointment item, int userId, int? professionalId, int? studyId)
         {
             var user = _context.Set<User>().FirstOrDefault(u => u.Id == userId);

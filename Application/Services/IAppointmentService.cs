@@ -10,7 +10,7 @@ namespace Application.Services
         List<AppointmentResponse> GetByUserId(int userId);
         bool Update(int id, UpdateAppointmentRequest request, out string message);
         bool Delete(int id, out string message);
-        bool UpdateStatus(int id, UpdateStatusAppointmentRequest appointment, out string message);
+        Task<(bool ok, string message)> UpdateStatusAsync(int id, UpdateStatusAppointmentRequest appointment);
         bool Create(CreateAppointmentRequest appointment, out string message, out int createdId);
 
     }
