@@ -1,7 +1,8 @@
 ﻿using Application.Abstraction;
+using Application.Abstraction.Notifications;
+using Application.Services.Helpers;
 using Contracts.Appointment.Requests;
 using Contracts.Appointment.Responses;
-using Application.Services.Helpers;
 using Domain.Entities;
 
 namespace Application.Services
@@ -12,13 +13,21 @@ namespace Application.Services
         private readonly IProfessionalRepository _professionalRepository;
         private readonly IStudyRepository _studyRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IAppointmentNotifier _notifier;
 
-        public AppointmentService(IAppointmentRepository appointmentRepository, IProfessionalRepository professionalRepository, IStudyRepository studyRepository, IUserRepository userRepository)
+        public AppointmentService(
+            IAppointmentRepository appointmentRepository, 
+            IProfessionalRepository professionalRepository, 
+            IStudyRepository studyRepository, 
+            IUserRepository userRepository,
+            IAppointmentNotifier notifier
+            )
         {
             _appointmentRepository = appointmentRepository;
             _professionalRepository = professionalRepository;
             _studyRepository = studyRepository;
             _userRepository = userRepository;
+            _notifier = notifier;
         }
 
         public List<AppointmentResponse> GetAll()
@@ -84,28 +93,24 @@ namespace Application.Services
             return true;
         }
 
-        public bool UpdateStatus(int id,UpdateStatusAppointmentRequest appointment, out string message)
+        public async Task<(bool ok, string message)> UpdateStatusAsync(int id, UpdateStatusAppointmentRequest appointment)
         {
-            message = "";
+            string message = "";
+
             var existingAppointment = _appointmentRepository.GetById(id);
             if (existingAppointment == null)
-            {
-                message = "El turno no existe.";
-                return false;
-            }
+                return (false, "El turno no existe.");
+
             if (existingAppointment.AppointmentStatus == appointment.AppointmentStatus)
-            {
-               message = $"El estado del turno ya es {existingAppointment.AppointmentStatus}.";
-                return false;
-            }
+                return (false, $"El estado del turno ya es {existingAppointment.AppointmentStatus}.");
 
-            var updateStatusRequest = new UpdateStatusAppointmentRequest
-            {
-                AppointmentStatus = appointment.AppointmentStatus
-            };
+            existingAppointment.AppointmentStatus = appointment.AppointmentStatus;
+            _appointmentRepository.Update(existingAppointment);
 
-            message = "Estado del turno actualizado correctamente.";
-            return true;
+            await _notifier.NotifyStatusChangeAsync(id);
+
+            message = "Estado actualizado correctamente. Notificación enviada.";
+            return (true, message);
         }
 
         public bool Create(CreateAppointmentRequest appointment, out string message, out int createdId)

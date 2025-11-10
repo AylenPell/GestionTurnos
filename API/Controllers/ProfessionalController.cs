@@ -1,7 +1,6 @@
 ﻿using Application.Services;
 using Contracts.Professional.Requests;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -45,6 +44,18 @@ namespace API.Controllers
             }
             return Ok(professional);
         }
+
+        [HttpGet("specialty/{specialtyId:int}")]
+        public IActionResult GetBySpecialty([FromRoute] int specialtyId)
+        {
+            var professionals = _professionalService.GetBySpecialtyId(specialtyId);
+
+            if (professionals == null || professionals.Count == 0)
+                return NotFound("No se encontraron profesionales para esa especialidad.");
+
+            return Ok(professionals);
+        }
+
         [HttpPost]
         public ActionResult Create([FromBody] CreateProfessionalRequest professional)
         {

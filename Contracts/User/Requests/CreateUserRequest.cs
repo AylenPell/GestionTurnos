@@ -4,7 +4,6 @@ namespace Contracts.User.Requests
 {
     public class CreateUserRequest
     {
-        public int Id { get; set; }
         [Required (ErrorMessage ="El nombre es requerido")]
         public string Name { get; set; }
         [Required(ErrorMessage = "El apellido es requerido")]
@@ -19,7 +18,6 @@ namespace Contracts.User.Requests
         [Required(ErrorMessage = "La ciudad es requerida")]
         public string? City { get; set; }
         public string? Phone { get; set; }
-        public int? RoleId { get; set; }
         [Required(ErrorMessage = "La contraseña es requerida")] // ver regex
         public string Password { get; set; }
         [Required(ErrorMessage = "La obra social es requerida")]

@@ -95,7 +95,7 @@ namespace Application.Services.Helpers
 
         public static bool PasswordValidator(string password)
         {
-            if (string.IsNullOrWhiteSpace(password) || password.Length < 9)
+            if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
                 return false;
 
             if (!Regex.IsMatch(password, @"[A-Z]"))
