@@ -70,7 +70,7 @@ jobs:
         run: dotnet tool install --global dotnet-ef --version 8.0.0
 
       - name: Update database with EF Core migrations
-        run: dotnet ef database update --project ./Infrastructure/Infrastructure.csproj --startup-project ./Api/Api.csproj
+        run: dotnet ef database update --project ./Infrastracture/Infrastracture.csproj --startup-project ./Api/Api.csproj
         env:
             ASPNETCORE_ENVIRONMENT: Production
 
