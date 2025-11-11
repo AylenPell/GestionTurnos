@@ -22,9 +22,12 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+ 
+      - name: Restore dependencies
+        run: dotnet restore GestionTurnos.sln
+      
+      - name: Build application
+        run: dotnet build GestionTurnos.sln --configuration Release --no-restore
 
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
@@ -43,6 +46,14 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
@@ -54,6 +65,14 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_690CF838D67C4BA5BF5FF8FF49E0AA03 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_DC2A9F5E59A74DD6BF24E49B01E8827E }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8049E8F2E95140A0BA628D19B69B9287 }}
+
+      - name: install dotnet ef tool
+        run: dotnet tool install --global dotnet-ef --version 8.0.0
+
+      - name: Update database with EF Core migrations
+        run: dotnet ef database update --project ./Infrastructure/Infrastructure.csproj --startup-project ./Api/Api.csproj
+        env:
+            ASPNETCORE_ENVIRONMENT: Production
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
