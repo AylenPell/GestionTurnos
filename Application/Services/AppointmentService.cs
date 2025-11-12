@@ -104,6 +104,9 @@ namespace Application.Services
             if (existingAppointment.AppointmentStatus == appointment.AppointmentStatus)
                 return (false, $"El estado del turno ya es {existingAppointment.AppointmentStatus}.");
 
+            if (!Enum.IsDefined(typeof(AppointmentStatus), appointment.AppointmentStatus))
+                return (false, "El estado del turno no es válido.");
+
             existingAppointment.AppointmentStatus = appointment.AppointmentStatus;
             _appointmentRepository.Update(existingAppointment);
 

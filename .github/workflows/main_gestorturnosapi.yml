@@ -67,13 +67,34 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_DC2A9F5E59A74DD6BF24E49B01E8827E }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8049E8F2E95140A0BA628D19B69B9287 }}
 
+      # secretos Twilio en App Service
+      - name: Set Twilio App Settings in Azure
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            RG=$(az webapp show --name GestorTurnosApi --query resourceGroup -o tsv)
+            az webapp config appsettings set \
+              --resource-group $RG \
+              --name GestorTurnosApi \
+              --settings \
+                Twilio__AccountSid='${{ secrets.TWILIO_ACCOUNT_SID }}' \
+                Twilio__AuthToken='${{ secrets.TWILIO_AUTH_TOKEN }}' \
+                Twilio__FromWhatsApp='${{ secrets.TWILIO_FROM_WHATSAPP }}'
+
+      - name: Restart WebApp (optional)
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            RG=$(az webapp show --name GestorTurnosApi --query resourceGroup -o tsv)
+            az webapp restart --resource-group $RG --name GestorTurnosApi
+
       - name: install dotnet ef tool
         run: dotnet tool install --global dotnet-ef --version 8.0.0
 
       - name: Update database with EF Core migrations
         run: dotnet ef database update --project ./Infrastracture/Infrastructure.csproj --startup-project ./API/API.csproj
         env:
-            ASPNETCORE_ENVIRONMENT: Production
+          ASPNETCORE_ENVIRONMENT: Production
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -82,4 +103,3 @@ jobs:
           app-name: 'GestorTurnosApi'
           slot-name: 'Production'
           package: ./myapp
-          
