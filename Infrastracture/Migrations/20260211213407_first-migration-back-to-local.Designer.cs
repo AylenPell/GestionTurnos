@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(GestorTurnosContext))]
-    [Migration("20251108235111_InitSqlServer3")]
-    partial class InitSqlServer3
+    [Migration("20260211213407_first-migration-back-to-local")]
+    partial class firstmigrationbacktolocal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
