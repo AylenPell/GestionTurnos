@@ -34,7 +34,8 @@ namespace Infrastructure.ExternalServices
             {
                 new Claim("sub", authenticatedUser.Id.ToString()),
                 new Claim(ClaimTypes.Role, authenticatedUser.Role.RoleName.ToString()),
-                new Claim("dni", authenticatedUser.DNI)
+                new Claim("dni", authenticatedUser.DNI),
+                new Claim(ClaimTypes.Name, authenticatedUser.Name) // ✅ Agregado el nombre del usuario
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
@@ -66,6 +67,7 @@ namespace Infrastructure.ExternalServices
             {
                 new Claim("sub", authenticatedProfessional.Id.ToString()),
                 new Claim(ClaimTypes.Role, authenticatedProfessional.Role.RoleName.ToString()),
+                new Claim(ClaimTypes.Name, authenticatedProfessional.Name) // ✅ Agregado el nombre del profesional
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));

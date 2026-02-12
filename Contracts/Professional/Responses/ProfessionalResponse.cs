@@ -1,5 +1,4 @@
-﻿
-namespace Contracts.Professional.Responses
+﻿namespace Contracts.Professional.Responses
 {
     public class ProfessionalResponse
     {
@@ -12,6 +11,6 @@ namespace Contracts.Professional.Responses
         public int RoleId { get; set; }
         public int SpecialtiesCount { get; set; }
         public string Email { get; set; }
-
+        public List<string> Specialties { get; set; } = new List<string>(); // ✅ Ya está
     }
 }

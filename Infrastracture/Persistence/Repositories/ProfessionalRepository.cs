@@ -11,18 +11,29 @@ namespace Infrastructure.Persistence.Repositories
         {
            _context = context;
         }
+        
         public override List<Professional> GetAll()
         {
             return _context.Professionals
                 .Include(p => p.ProfessionalSpecialties)
+                    .ThenInclude(ps => ps.Specialty)
                 .Where(p => p.IsActive)
                 .ToList();
+        }
+
+        public override Professional? GetById(int id)
+        {
+            return _context.Professionals
+                .Include(p => p.ProfessionalSpecialties)
+                    .ThenInclude(ps => ps.Specialty)
+                .FirstOrDefault(p => p.Id == id && p.IsActive);
         }
 
         public Professional? GetByLicense(string license)
         {
             return _context.Professionals
                 .Include(s => s.ProfessionalSpecialties)
+                    .ThenInclude(ps => ps.Specialty)
                 .FirstOrDefault(s => s.License == license && s.IsActive);
         }
 
