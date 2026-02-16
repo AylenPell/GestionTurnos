@@ -22,6 +22,9 @@ namespace Application.Services.Helpers
                 .Replace(")", "")
                 .Replace(" ", "")
                 .Trim();
+            
+            if (phone.StartsWith("0"))
+                phone = phone.Substring(1);
 
             if (!Regex.IsMatch(phone, @"^\d+$"))
                 return false;

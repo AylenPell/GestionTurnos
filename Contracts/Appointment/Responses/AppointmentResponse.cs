@@ -13,5 +13,8 @@ namespace Contracts.Appointment.Responses
         public int? ProfessionalId { get; set; }
         public int? StudyId { get; set; }
         public int UserId { get; set; }
+        public string? ProfessionalName { get; set; }
+        public string? StudyName { get; set; }
+        public string? UserName { get; set; }
     }
 }

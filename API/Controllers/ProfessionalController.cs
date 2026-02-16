@@ -7,7 +7,6 @@ namespace API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Policy = "AdminPolicy")]
 
     public class ProfessionalController : ControllerBase
     {
@@ -45,6 +44,7 @@ namespace API.Controllers
             return Ok(professional);
         }
 
+        [Authorize(Policy = "AdminPolicy")]
         [HttpGet("specialty/{specialtyId:int}")]
         public IActionResult GetBySpecialty([FromRoute] int specialtyId)
         {
@@ -56,6 +56,7 @@ namespace API.Controllers
             return Ok(professionals);
         }
 
+        [Authorize(Policy = "AdminPolicy")]
         [HttpPost]
         public ActionResult Create([FromBody] CreateProfessionalRequest professional)
         {
@@ -70,6 +71,7 @@ namespace API.Controllers
 
         }
 
+        [Authorize(Policy = "AdminPolicy")]
         [HttpPut("{id}")]
         public ActionResult Update([FromRoute] int id, [FromBody] UpdateProfessionalRequest request)
         {
@@ -82,6 +84,7 @@ namespace API.Controllers
             return Ok(new { message });
         }
 
+        [Authorize(Policy = "AdminPolicy")]
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {

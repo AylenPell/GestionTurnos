@@ -1,4 +1,4 @@
-﻿using Application.Abstraction;
+﻿    using Application.Abstraction;
 using Application.Abstraction.Notifications;
 using Application.Services.Helpers;
 using Contracts.Appointment.Requests;
@@ -66,7 +66,16 @@ namespace Application.Services
                     AppointmentStatus = appointment.AppointmentStatus,
                     ProfessionalId = appointment.Professional != null ? (int?)appointment.Professional.Id : null,
                     StudyId = appointment.Study != null ? (int?)appointment.Study.Id : null,
-                    UserId = appointment.User.Id
+                    UserId = appointment.User.Id,
+                    
+                    // ✅ Nuevos campos calculados agregados
+                    ProfessionalName = appointment.Professional != null 
+                        ? $"{appointment.Professional.Name} {appointment.Professional.LastName}" 
+                        : null,
+                    StudyName = appointment.Study != null ? appointment.Study.Name : null,
+                    UserName = appointment.User != null 
+                        ? $"{appointment.User.Name} {appointment.User.LastName}" 
+                        : null
                 })
                 .OrderBy(a => a.AppointmentDate == null)
                 .ThenBy(a => a.AppointmentDate)
@@ -74,6 +83,7 @@ namespace Application.Services
 
             return appointmentLists;
         }
+        
         public bool Delete(int id, out string message)
         {
             message = "";
