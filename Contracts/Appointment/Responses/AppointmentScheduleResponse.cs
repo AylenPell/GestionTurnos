@@ -9,5 +9,6 @@ namespace Contracts.Appointment.Responses
         public string AppointmentType { get; set; }
         public DateOnly? AppointmentDate { get; set; }
         public TimeOnly? AppointmentTime { get; set; }
+        public string? UserName { get; set; }
     }
 }

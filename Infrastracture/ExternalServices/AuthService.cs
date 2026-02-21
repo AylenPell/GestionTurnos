@@ -67,7 +67,8 @@ namespace Infrastructure.ExternalServices
             {
                 new Claim("sub", authenticatedProfessional.Id.ToString()),
                 new Claim(ClaimTypes.Role, authenticatedProfessional.Role.RoleName.ToString()),
-                new Claim(ClaimTypes.Name, authenticatedProfessional.Name) // ✅ Agregado el nombre del profesional
+                new Claim(ClaimTypes.Name, authenticatedProfessional.Name),
+                new Claim(ClaimTypes.Surname, authenticatedProfessional.LastName)
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));

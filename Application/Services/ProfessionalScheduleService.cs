@@ -13,7 +13,7 @@ namespace Application.Services
 
         public AppointmentScheduleResponse? GetById(int id)
         {
-            var appointment = _appointmentRepository.GetById(id);
+            var appointment = _appointmentRepository.GetByIdWithRelations(id);
             return appointment is not null && (appointment.IsActive)
                 ? new AppointmentScheduleResponse
                 {
@@ -22,7 +22,10 @@ namespace Application.Services
                     IsPatient = appointment.IsPatient,
                     AppointmentType = appointment.AppointmentType,
                     AppointmentDate = appointment.AppointmentDate,
-                    AppointmentTime = appointment.AppointmentTime
+                    AppointmentTime = appointment.AppointmentTime,
+                    UserName = appointment.User != null 
+                        ? $"{appointment.User.Name} {appointment.User.LastName}" 
+                        : null
                 }
                 : null;
         }
@@ -39,7 +42,10 @@ namespace Application.Services
                     IsPatient = a.IsPatient,
                     AppointmentType = a.AppointmentType,
                     AppointmentDate = a.AppointmentDate,
-                    AppointmentTime = a.AppointmentTime
+                    AppointmentTime = a.AppointmentTime,
+                    UserName = a.User != null 
+                        ? $"{a.User.Name} {a.User.LastName}" 
+                        : null
                 })
                 .ToList();
 
