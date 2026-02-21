@@ -13,5 +13,6 @@ namespace Application.Services
         bool Update(int id, UpdateProfessionalRequest professional, out string message);
         bool Delete(int id, out string message);
         bool Create(CreateProfessionalRequest professional, out string message, out int createdId);
+        bool Reactivate(int id, out string message);
     }
 }

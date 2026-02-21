@@ -31,7 +31,8 @@ namespace Application.Services
                     Phone = user.Phone,
                     HealthInsurance = user.HealthInsurance,
                     HealthInsurancePlan = user.HealthInsurancePlan,
-                    RoleId = user.RoleId
+                    RoleId = user.RoleId,
+                    IsActive = user.IsActive
                 }).ToList();
 
             return usersList;
@@ -53,7 +54,8 @@ namespace Application.Services
                     Phone = user.Phone,
                     HealthInsurance = user.HealthInsurance,
                     HealthInsurancePlan = user.HealthInsurancePlan,
-                    RoleId = user.RoleId
+                    RoleId = user.RoleId,
+                    IsActive = user.IsActive
                 }
                 : null;
         }
@@ -74,7 +76,8 @@ namespace Application.Services
                     Phone = user.Phone,
                     HealthInsurance = user.HealthInsurance,
                     HealthInsurancePlan = user.HealthInsurancePlan,
-                    RoleId = user.RoleId
+                    RoleId = user.RoleId,
+                    IsActive = user.IsActive
                 }
                 : null;
         }
@@ -241,6 +244,33 @@ namespace Application.Services
             }
             _userRepository.Delete(deletedUser);
             message = "Usuario eliminado exitosamente.";
+            return true;
+        }
+
+        public bool Reactivate(int id, out string message)
+        {
+            message = "";
+            var user = _userRepository.GetById(id);
+            if (user == null)
+            {
+                message = "El usuario no existe.";
+                return false;
+            }
+            if (user.IsActive)
+            {
+                message = "El usuario ya está activo.";
+                return false;
+            }
+            user.IsActive = true;
+            var updated = _userRepository.Update(user);
+            
+            if (!updated)
+            {
+                message = "No se pudo reactivar el usuario.";
+                return false;
+            }
+            
+            message = "Usuario reactivado exitosamente.";
             return true;
         }
     }

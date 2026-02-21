@@ -80,8 +80,20 @@ public class SuperAdminUserController : ControllerBase
         string message;
         var isDeleted = _superAdminService.Delete(id, out message);
         if (!isDeleted)
-            return Conflict("Error al eliminar el usuario");
+            return Conflict(new { message });
 
         return NoContent();
+    }
+
+    [HttpPatch("reactivate/{id}")]
+    public ActionResult Reactivate([FromRoute] int id)
+    {
+        string message;
+        var isReactivated = _superAdminService.Reactivate(id, out message);
+        
+        if (!isReactivated)
+            return Conflict(new { message });
+
+        return Ok(new { message });
     }
 }

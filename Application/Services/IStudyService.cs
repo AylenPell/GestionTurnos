@@ -10,5 +10,6 @@ namespace Application.Services
         bool Create(CreateStudyRequest study, out string message, out int createdId);
         bool Update(int id, UpdateStudyRequest study, out string message);
         bool Delete(int id, out string message);
+        bool Reactivate(int id, out string message);
     }
 }

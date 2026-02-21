@@ -83,8 +83,37 @@ namespace Application.Services
                 message = "El estudio no existe.";
                 return false;
             }
+            if (!existingStudy.IsActive)
+            {
+                message = "El estudio ya se encuentra inactivo.";
+                return false;
+            }
             _studyRepository.Delete(existingStudy);
-            message = "Estudio eliminado exitosamente.";
+            message = "Estudio desactivado exitosamente.";
+            return true;
+        }
+
+        public bool Reactivate(int id, out string message)
+        {
+            message = "";
+            var existingStudy = _studyRepository.GetById(id);
+            
+            if (existingStudy == null)
+            {
+                message = "El estudio no existe.";
+                return false;
+            }
+            
+            if (existingStudy.IsActive)
+            {
+                message = "El estudio ya se encuentra activo.";
+                return false;
+            }
+            
+            existingStudy.IsActive = true;
+            _studyRepository.Update(existingStudy);
+            
+            message = "Estudio reactivado exitosamente.";
             return true;
         }
 

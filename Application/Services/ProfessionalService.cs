@@ -26,7 +26,11 @@ namespace Application.Services
                     AttentionSchedule = professional.AttentionSchedule,
                     RoleId = professional.RoleId,
                     SpecialtiesCount = professional.ProfessionalSpecialties.Count,
-                    Email = professional.Email
+                    Email = professional.Email,
+                    Specialties = professional.ProfessionalSpecialties
+                        .Where(ps => ps.IsActive)
+                        .Select(ps => ps.Specialty.SpecialtyName)
+                        .ToList()
                 })
                 .OrderBy(professional => professional.Name)
                 .ToList();
@@ -52,7 +56,11 @@ namespace Application.Services
                 AttentionSchedule = professional.AttentionSchedule,
                 RoleId = professional.RoleId,
                 SpecialtiesCount = professional.ProfessionalSpecialties.Count,
-                Email = professional.Email
+                Email = professional.Email,
+                Specialties = professional.ProfessionalSpecialties
+                    .Where(ps => ps.IsActive)
+                    .Select(ps => ps.Specialty.SpecialtyName)
+                    .ToList()
             };
             message = "Profesional encontrado.";
             return professionalResponse;
@@ -76,7 +84,11 @@ namespace Application.Services
                 AttentionSchedule = professional.AttentionSchedule,
                 RoleId = professional.RoleId,
                 SpecialtiesCount = professional.ProfessionalSpecialties.Count,
-                Email = professional.Email
+                Email = professional.Email,
+                Specialties = professional.ProfessionalSpecialties
+                    .Where(ps => ps.IsActive)
+                    .Select(ps => ps.Specialty.SpecialtyName)
+                    .ToList()
             };
             message = "Profesional encontrado:";
             return professionalResponse; 
@@ -96,7 +108,11 @@ namespace Application.Services
                     License = p.License,
                     AttentionSchedule = p.AttentionSchedule,
                     RoleId = p.RoleId,
-                    SpecialtiesCount = p.ProfessionalSpecialties?.Count ?? 0
+                    SpecialtiesCount = p.ProfessionalSpecialties?.Count ?? 0,
+                    Specialties = p.ProfessionalSpecialties
+                        ?.Where(ps => ps.IsActive)
+                        .Select(ps => ps.Specialty.SpecialtyName)
+                        .ToList() ?? new List<string>()
                 })
                 .OrderBy(p => p.Name)
                 .ThenBy(p => p.LastName)
@@ -216,6 +232,36 @@ namespace Application.Services
             }
 
             message = "Profesional desactivado correctamente.";
+            return true;
+        }
+
+        public bool Reactivate(int id, out string message)
+        {
+            message = "";
+
+            var existingProfessional = _professionalRepository.GetById(id);
+            if (existingProfessional == null)
+            {
+                message = "Profesional no encontrado.";
+                return false;
+            }
+
+            if (existingProfessional.IsActive)
+            {
+                message = "El profesional ya se encuentra activo.";
+                return false;
+            }
+
+            existingProfessional.IsActive = true;
+            var result = _professionalRepository.Update(existingProfessional);
+
+            if (!result)
+            {
+                message = "No se pudo reactivar el profesional.";
+                return false;
+            }
+
+            message = "Profesional reactivado correctamente.";
             return true;
         }
 

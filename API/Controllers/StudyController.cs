@@ -8,7 +8,6 @@ namespace API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Policy = "AdminPolicy")]
 public class StudyController : ControllerBase
 {
     private readonly IStudyService _studyService;
@@ -36,6 +35,7 @@ public class StudyController : ControllerBase
         return Ok(study);
     }
 
+    [Authorize(Policy = "AdminPolicy")]
     [HttpPost]
     public ActionResult Create([FromBody] CreateStudyRequest study)
     {
@@ -52,6 +52,7 @@ public class StudyController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = createdId }, new { id = createdId, message });
     }
 
+    [Authorize(Policy = "AdminPolicy")]
     [HttpPut("{id}")]
     public ActionResult Update([FromRoute] int id, [FromBody] UpdateStudyRequest study)
     {
@@ -65,6 +66,7 @@ public class StudyController : ControllerBase
         return Ok(new { message });
     }
 
+    [Authorize(Policy = "AdminPolicy")]
     [HttpDelete("{id}")]
     public ActionResult Delete([FromRoute] int id)
     {
@@ -72,6 +74,19 @@ public class StudyController : ControllerBase
 
         var isDeleted = _studyService.Delete(id, out message);
         if (!isDeleted)
+            return Conflict(new { message });
+
+        return Ok(new { message });
+    }
+
+    [Authorize(Policy = "AdminPolicy")]
+    [HttpPatch("reactivate/{id}")]
+    public ActionResult Reactivate([FromRoute] int id)
+    {
+        string message;
+        var isReactivated = _studyService.Reactivate(id, out message);
+        
+        if (!isReactivated)
             return Conflict(new { message });
 
         return Ok(new { message });

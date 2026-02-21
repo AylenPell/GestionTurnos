@@ -5,10 +5,10 @@ namespace Contracts.SuperAdmin.Responses
     public class SuperAdminUserResponse
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public string DNI { get; set; }
-        public string Email { get; set; }
+        public string Name { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public string DNI { get; set; } = null!;
+        public string Email { get; set; } = null!;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateOnly? BirthDate { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -22,6 +22,6 @@ namespace Contracts.SuperAdmin.Responses
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? HealthInsurancePlan { get; set; }
         public int? RoleId { get; set; }
-
+        public bool IsActive { get; set; }
     }
 }
