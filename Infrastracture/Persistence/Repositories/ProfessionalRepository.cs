@@ -17,7 +17,6 @@ namespace Infrastructure.Persistence.Repositories
             return _context.Professionals
                 .Include(p => p.ProfessionalSpecialties)
                     .ThenInclude(ps => ps.Specialty)
-                .Where(p => p.IsActive)
                 .ToList();
         }
 
@@ -26,7 +25,7 @@ namespace Infrastructure.Persistence.Repositories
             return _context.Professionals
                 .Include(p => p.ProfessionalSpecialties)
                     .ThenInclude(ps => ps.Specialty)
-                .FirstOrDefault(p => p.Id == id && p.IsActive);
+                .FirstOrDefault(p => p.Id == id);
         }
 
         public Professional? GetByLicense(string license)
@@ -34,7 +33,7 @@ namespace Infrastructure.Persistence.Repositories
             return _context.Professionals
                 .Include(s => s.ProfessionalSpecialties)
                     .ThenInclude(ps => ps.Specialty)
-                .FirstOrDefault(s => s.License == license && s.IsActive);
+                .FirstOrDefault(s => s.License == license);
         }
 
         public List<Professional> GetBySpecialtyId(int specialtyId)

@@ -11,7 +11,8 @@ namespace Application.Abstraction
 {
     public interface IAppointmentRepository : IBaseRepository<Appointment>
     {
-        IQueryable<Appointment> GetByUserId(int userId);
+        IEnumerable<Appointment> GetByUserId(int userId);
+        IEnumerable<Appointment> GetAll();
         //bool CreateWithReferences(Appointment item, int userId, int? professionalId, int? studyId);
         Appointment? GetByIdWithRelations(int id);
     }

@@ -235,6 +235,36 @@ namespace Application.Services
             return true;
         }
 
+        public bool Reactivate(int id, out string message)
+        {
+            message = "";
+
+            var existingProfessional = _professionalRepository.GetById(id);
+            if (existingProfessional == null)
+            {
+                message = "Profesional no encontrado.";
+                return false;
+            }
+
+            if (existingProfessional.IsActive)
+            {
+                message = "El profesional ya se encuentra activo.";
+                return false;
+            }
+
+            existingProfessional.IsActive = true;
+            var result = _professionalRepository.Update(existingProfessional);
+
+            if (!result)
+            {
+                message = "No se pudo reactivar el profesional.";
+                return false;
+            }
+
+            message = "Profesional reactivado correctamente.";
+            return true;
+        }
+
        
     }
 }

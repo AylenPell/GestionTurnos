@@ -78,4 +78,17 @@ public class StudyController : ControllerBase
 
         return Ok(new { message });
     }
+
+    [Authorize(Policy = "AdminPolicy")]
+    [HttpPatch("reactivate/{id}")]
+    public ActionResult Reactivate([FromRoute] int id)
+    {
+        string message;
+        var isReactivated = _studyService.Reactivate(id, out message);
+        
+        if (!isReactivated)
+            return Conflict(new { message });
+
+        return Ok(new { message });
+    }
 }

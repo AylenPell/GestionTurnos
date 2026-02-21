@@ -12,19 +12,23 @@ namespace Infrastructure.Persistence.Repositories
         {
               _context = context;
         }
-        public IQueryable<Appointment> GetAll()
+        public IEnumerable<Appointment> GetAll()
         {
             return _context.Appointments
                 .Include(a => a.Professional)
                 .Include(a => a.Study)
-                .Include(a => a.User);
+                .Include(a => a.User)
+                .Where(a => a.IsActive)
+                .ToList();
         }
-        public IQueryable<Appointment> GetByUserId(int userId)
+        public IEnumerable<Appointment> GetByUserId(int userId)
         {
             return _context.Appointments
-                .Where(a => a.User.Id == userId && a.IsActive) // si usás soft delete
-                .Include(a => a.Professional) // si querés traer el profesional
-                .Include(a => a.Study);       // si querés traer el estudio
+                .Include(a => a.Professional)
+                .Include(a => a.Study)
+                .Include(a => a.User)
+                .Where(a => a.IsActive && a.UserId == userId)
+                .ToList();
         }
         public Appointment? GetByIdWithRelations(int id)
         {

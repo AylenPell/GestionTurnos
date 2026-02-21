@@ -96,10 +96,22 @@ namespace API.Controllers
                     return NotFound(message);
 
                 // Si ya estaba inactivo o hubo otra validación de negocio
-                return BadRequest(string.IsNullOrWhiteSpace(message) ? "No se pudo desactivar el profesional." : message);
+                return Conflict(new { message });
             }
 
-            // Podrías usar NoContent(), pero como devolvés message es útil responder 200
+            return Ok(new { message });
+        }
+
+        [Authorize(Policy = "AdminPolicy")]
+        [HttpPatch("reactivate/{id}")]
+        public ActionResult Reactivate([FromRoute] int id)
+        {
+            string message;
+            var isReactivated = _professionalService.Reactivate(id, out message);
+
+            if (!isReactivated)
+                return Conflict(new { message });
+
             return Ok(new { message });
         }
     }

@@ -12,5 +12,6 @@ namespace Application.Services
         bool Create(SuperAdminCreateUserRequest user, out string message, out int createdId);
         bool Update(int id, SuperAdminUpdateUserRequest user, out string message);
         bool Delete(int id, out string message);
+        bool Reactivate(int id, out string message);
     }
 }

@@ -42,9 +42,18 @@ namespace Application.Services
                     AppointmentDate = appointment.AppointmentDate,
                     AppointmentTime = appointment.AppointmentTime,
                     AppointmentStatus = appointment.AppointmentStatus,
-                    ProfessionalId = appointment.ProfessionalId,
-                    StudyId = appointment.StudyId,
-                    UserId = appointment.UserId
+                    ProfessionalId = appointment.Professional != null ? (int?)appointment.Professional.Id : null,
+                    StudyId = appointment.Study != null ? (int?)appointment.Study.Id : null,
+                    UserId = appointment.UserId,
+                    
+                    // Campos calculados para mostrar nombres en el frontend
+                    ProfessionalName = appointment.Professional != null 
+                        ? $"{appointment.Professional.Name} {appointment.Professional.LastName}" 
+                        : null,
+                    StudyName = appointment.Study != null ? appointment.Study.Name : null,
+                    UserName = appointment.User != null 
+                        ? $"{appointment.User.Name} {appointment.User.LastName}" 
+                        : null
                 })
                 .OrderBy(a => a.AppointmentDate ?? DateOnly.MaxValue)
                 .ToList();
