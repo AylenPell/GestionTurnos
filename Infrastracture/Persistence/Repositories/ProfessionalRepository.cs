@@ -52,5 +52,54 @@ namespace Infrastructure.Persistence.Repositories
                 .Include(p => p.Role)
                 .FirstOrDefault(p => p.Email == user && p.Password == password && p.IsActive);
         }
+
+        public void UpdateProfessionalSpecialties(int professionalId, List<int> specialtyIds)
+        {
+            // Obtener las relaciones actuales del profesional (sin filtro de IsActive)
+            var currentRelations = _context.ProfessionalSpecialties
+                .Where(ps => ps.ProfessionalId == professionalId)
+                .ToList();
+
+            // Procesar especialidades
+            foreach (var specialtyId in specialtyIds)
+            {
+                var existingRelation = currentRelations
+                    .FirstOrDefault(ps => ps.SpecialtyId == specialtyId);
+
+                if (existingRelation != null)
+                {
+                    // Si existe pero está inactiva, reactivarla
+                    if (!existingRelation.IsActive)
+                    {
+                        existingRelation.IsActive = true;
+                        existingRelation.LastUpdate = DateOnly.FromDateTime(DateTime.Now);
+                    }
+                }
+                else
+                {
+                    // Crear nueva relación
+                    var newRelation = new ProfessionalSpecialty
+                    {
+                        ProfessionalId = professionalId,
+                        SpecialtyId = specialtyId,
+                        AssignedDate = DateOnly.FromDateTime(DateTime.Now),
+                        IsActive = true
+                    };
+                    _context.ProfessionalSpecialties.Add(newRelation);
+                }
+            }
+
+            // Desactivar especialidades que ya no están en la lista
+            var specialtiesToDeactivate = currentRelations
+                .Where(ps => ps.IsActive && !specialtyIds.Contains(ps.SpecialtyId));
+
+            foreach (var relation in specialtiesToDeactivate)
+            {
+                relation.IsActive = false;
+                relation.LastUpdate = DateOnly.FromDateTime(DateTime.Now);
+            }
+
+            _context.SaveChanges();
+        }
     }
 }

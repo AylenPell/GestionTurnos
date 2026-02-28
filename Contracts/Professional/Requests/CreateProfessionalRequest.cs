@@ -21,5 +21,6 @@ namespace Contracts.Professional.Requests
         public string? Email { get; set; }
         [Required(ErrorMessage = "La contraseña es requerida.")]
         public string? Password { get; set; }
+        public List<string>? Specialties { get; set; }
     }
 }

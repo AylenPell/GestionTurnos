@@ -2,15 +2,21 @@
 using Contracts.Professional.Requests;
 using Contracts.Professional.Responses;
 using Contracts.Specialty.Requests;
+using Domain.Entities;
 
 namespace Application.Services
 {
     public class ProfessionalService : IProfessionalService
     {
         public readonly IProfessionalRepository _professionalRepository;
-        public ProfessionalService(IProfessionalRepository professionalRepository)
+        private readonly ISpecialtyRepository _specialtyRepository;
+
+        public ProfessionalService(
+            IProfessionalRepository professionalRepository,
+            ISpecialtyRepository specialtyRepository)
         {
             _professionalRepository = professionalRepository;
+            _specialtyRepository = specialtyRepository;
         }
         public List<ProfessionalResponse> GetAll()
         {
@@ -152,6 +158,41 @@ namespace Application.Services
             };
             _professionalRepository.Create(newProfessional);
             createdId = newProfessional.Id;
+
+            // Asignar especialidades si se proporcionan
+            if (professional.Specialties != null && professional.Specialties.Any())
+            {
+                var normalizedSpecialtyNames = professional.Specialties
+                    .Select(s => s.Trim().ToLower())
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToList();
+
+                var allSpecialties = _specialtyRepository.GetAll()
+                    .Where(s => s.IsActive)
+                    .ToList();
+
+                var existingSpecialtyNames = allSpecialties
+                    .Select(s => s.SpecialtyName.ToLower())
+                    .ToList();
+
+                var invalidSpecialties = normalizedSpecialtyNames
+                    .Where(name => !existingSpecialtyNames.Contains(name))
+                    .ToList();
+
+                if (invalidSpecialties.Any())
+                {
+                    message = $"Profesional creado pero las siguientes especialidades no existen: {string.Join(", ", invalidSpecialties)}";
+                    return true;
+                }
+
+                var specialtyIds = allSpecialties
+                    .Where(s => normalizedSpecialtyNames.Contains(s.SpecialtyName.ToLower()))
+                    .Select(s => s.Id)
+                    .ToList();
+
+                _professionalRepository.UpdateProfessionalSpecialties(newProfessional.Id, specialtyIds);
+            }
+
             message = "Profesional creado correctamente.";
             return true;
 
@@ -193,6 +234,45 @@ namespace Application.Services
 
             if (!string.IsNullOrWhiteSpace(professional.Password))
                 existing.Password = professional.Password.Trim();
+
+            // Actualizar especialidades si se proporcionan
+            if (professional.Specialties != null)
+            {
+                // Normalizar los nombres de especialidades recibidos
+                var normalizedSpecialtyNames = professional.Specialties
+                    .Select(s => s.Trim().ToLower())
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToList();
+
+                // Obtener todas las especialidades del sistema para validar
+                var allSpecialties = _specialtyRepository.GetAll()
+                    .Where(s => s.IsActive)
+                    .ToList();
+
+                // Validar que todas las especialidades existen
+                var existingSpecialtyNames = allSpecialties
+                    .Select(s => s.SpecialtyName.ToLower())
+                    .ToList();
+
+                var invalidSpecialties = normalizedSpecialtyNames
+                    .Where(name => !existingSpecialtyNames.Contains(name))
+                    .ToList();
+
+                if (invalidSpecialties.Any())
+                {
+                    message = $"Las siguientes especialidades no existen: {string.Join(", ", invalidSpecialties)}";
+                    return false;
+                }
+
+                // Obtener los IDs de las especialidades a asignar
+                var specialtyIds = allSpecialties
+                    .Where(s => normalizedSpecialtyNames.Contains(s.SpecialtyName.ToLower()))
+                    .Select(s => s.Id)
+                    .ToList();
+
+                // Usar el método del repositorio para actualizar las especialidades
+                _professionalRepository.UpdateProfessionalSpecialties(id, specialtyIds);
+            }
 
             var updated = _professionalRepository.Update(existing);
             if (!updated)

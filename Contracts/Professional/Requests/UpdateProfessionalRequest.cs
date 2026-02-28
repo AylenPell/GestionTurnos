@@ -9,5 +9,6 @@ namespace Contracts.Professional.Requests
         public string? AttentionSchedule { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
+        public List<string>? Specialties { get; set; }
     }
 }

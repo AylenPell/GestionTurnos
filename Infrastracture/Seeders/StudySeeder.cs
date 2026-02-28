@@ -27,8 +27,9 @@ namespace Infrastructure.Seeders
         };
 
         /// <summary>
-        /// Inserta solo los estudios faltantes.
+        /// Inserta solo los estudios faltantes (modo dev).
         /// No modifica ni reactiva los que ya existen.
+        /// Solo asegura que haya 16 registros.
         /// </summary>
         public static async Task SeedAsync(IServiceProvider services, bool migrateDb = true)
         {
@@ -38,24 +39,20 @@ namespace Infrastructure.Seeders
             if (migrateDb)
                 await context.Database.MigrateAsync();
 
-            // Traemos los nombres existentes (activos e inactivos)
-            var existingNames = await context.Studies
-                .Select(s => s.Name.Trim().ToLower())
+            // Traemos los IDs existentes
+            var existingIds = await context.Studies
+                .Select(s => s.Id)
                 .ToListAsync();
 
-            foreach (var name in DefaultStudies)
+            for (int i = 1; i <= DefaultStudies.Length; i++)
             {
-                var normalizedName = name.Trim();
-                var key = normalizedName.ToLower();
-
-                // Si ya existe (activo o inactivo), no hacemos nada
-                if (existingNames.Contains(key))
+                // Si ya existe ese ID, no hacemos nada
+                if (existingIds.Contains(i))
                     continue;
 
-                // No existe: creamos un nuevo estudio activo
                 context.Studies.Add(new Study
                 {
-                    Name = normalizedName,
+                    Name = DefaultStudies[i - 1].Trim(),
                     IsActive = true
                 });
             }

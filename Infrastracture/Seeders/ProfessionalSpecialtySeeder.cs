@@ -27,8 +27,9 @@ namespace Infrastructure.Seeders
                 .OrderBy(s => s.Id)
                 .ToListAsync();
 
-            // Relaciones existentes para evitar duplicados
+            // Relaciones existentes para evitar duplicados (ignora el query filter de IsActive)
             var existingRelations = await context.ProfessionalSpecialties
+                .IgnoreQueryFilters()
                 .Select(ps => new { ps.ProfessionalId, ps.SpecialtyId })
                 .ToListAsync();
 
