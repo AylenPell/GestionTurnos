@@ -6,5 +6,6 @@ namespace Application.ExternalServices
     {
         public string Login(AuthCredentials credentials, out string message);
         public string ProfessionalLogin(AuthCredentials credentials, out string message);
+        public Task<(bool success, string message, string newPassword)> RecoverPasswordAsync(RecoverPasswordRequest request);
     }
 }

@@ -36,5 +36,18 @@ namespace API.Controllers
             }
             return Ok(token);
         }
+
+        [HttpPost("RecoverPassword")]
+        public async Task<ActionResult> RecoverPassword([FromBody] RecoverPasswordRequest request)
+        {
+            var (success, message, newPassword) = await _authService.RecoverPasswordAsync(request);
+            
+            if (!success)
+            {
+                return BadRequest(new { message });
+            }
+
+            return Ok(new { message, newPassword });
+        }
     }
 }
