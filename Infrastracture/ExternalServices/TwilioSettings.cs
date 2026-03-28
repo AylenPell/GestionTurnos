@@ -6,5 +6,6 @@
         public string AuthToken { get; set; } = default!;
         public string From { get; set; } = default!;
         public string ToTest { get; set; } = default!;
+        public string VerificationCodeContentSid { get; set; } = default!;
     }
 }

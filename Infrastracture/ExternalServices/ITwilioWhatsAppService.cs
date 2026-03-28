@@ -8,5 +8,6 @@ namespace Infrastructure.ExternalServices
         Task<bool> SendToUserAsync(TwilioWhatsAppMessageRequest request);
         Task<bool> SendWhatsAppMessageAsync(string to, string body);
         Task<bool> SendAppointmentStatusUpdateAsync(int appointmentId);
+        Task<bool> SendVerificationCodeAsync(int userId, string code);
     }
 }

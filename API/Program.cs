@@ -99,6 +99,7 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 // twilio
 builder.Services.AddScoped<ITwilioWhatsAppService, TwilioWhatsAppService>();
 builder.Services.AddScoped<IAppointmentNotifier, TwilioAppointmentNotifier>();
+builder.Services.AddSingleton<IVerificationCodeService, VerificationCodeService>();
 
 #endregion
 
@@ -131,7 +132,7 @@ builder.Services
             new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
         client.DefaultRequestHeaders.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+            new MediaTypeWithQualityHeaderValue("application/json"));
     })
     // 🔹 Agregar políticas Polly (Retry + CircuitBreaker)
     .AddPolicyHandler((sp, _) => ResiliencePolicies.GetWaitAndRetryPolicy(twillioPollys))

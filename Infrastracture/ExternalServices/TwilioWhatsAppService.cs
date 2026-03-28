@@ -87,6 +87,20 @@ namespace Infrastructure.ExternalServices
             return response.IsSuccessStatusCode;
         }
 
+        public async Task<bool> SendVerificationCodeAsync(int userId, string code)
+        {
+            var user = _userRepository.GetById(userId);
+            if (user == null) return false;
+
+            var to = NormalizeToWhatsApp(user.Phone);
+            if (to is null) return false;
+
+            // Mensaje personalizado de verificación
+            string message = $"Hola! Tu código de verificación de FemCare es: {code}. Ingresalo en la aplicación para terminar de crear tu cuenta.";
+
+            return await SendWhatsAppMessageAsync(to, message);
+        }
+
         // agrega +549 adelante del número ya limpio
         private static string? NormalizeToWhatsApp(string? raw)
         {

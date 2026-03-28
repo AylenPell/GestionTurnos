@@ -368,3 +368,13 @@ appsettings.Development.json
 *.db*
 *.db-shm
 *.db-wal
+
+# Twilio test files
+TwilioTest/
+
+# API test files
+*.http
+test-*.http
+
+# Documentation with sensitive info (optional - remove if you want to share)
+# README-SECRETS.md
